@@ -1,0 +1,222 @@
+############################
+# OS 共通 & エディタ系
+############################
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code
+.vscode/
+
+# JetBrains / IntelliJ / Rider
+.idea/
+*.iml
+out/
+
+# ログファイル
+*.log
+
+############################
+# 共通ビルド出力
+############################
+bin/
+obj/
+out/
+build/
+dist/
+target/
+.gradle/
+
+############################
+# .NET / .NET MAUI
+############################
+
+# ユーザー固有ファイル
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# ビルド出力
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+
+# パッケージ
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Roslyn
+*.ide/
+
+# Publish 出力
+**/publish/
+**/PublishProfiles/
+
+# MAUI / Xamarin 関連
+*.apk
+*.aab
+*.app
+*.ipa
+*.xcarchive
+*.xcuserstate
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/xcshareddata/**
+*.xuserstate
+*.xcworkspace/
+*/.vs/
+
+# プラットフォームごとの一時ファイル
+*.tlog
+*.cache
+*.tmp
+
+############################
+# Java / Spring Boot (Maven / Gradle)
+############################
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper-downloader.jar
+.mvn/wrapper/maven-wrapper-downloader.iml
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper-downloader.jar
+.mvn/wrapper/maven-wrapper-downloader.iml
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper-downloader.jar
+.mvn/wrapper/maven-wrapper-downloader.iml### 推奨 `.gitignore`（.NET MAUI + Spring Boot 共存ディレクトリ用）
+
+ルート直下に以下の内容で `.gitignore` を1つ置けば、だいたいカバーできます。
+
+```gitignore
+############################
+# 共通 / OS
+############################
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS（もし使う場合）
+.DS_Store
+.AppleDouble
+.LSOverride
+
+############################
+# IDE / エディタ
+############################
+# VS Code
+.vscode/
+.history/
+*.code-workspace
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+############################
+# .NET / MAUI
+############################
+bin/
+obj/
+[Bb]uild/
+[Bb]uilds/
+artifacts/
+_TestResults/
+TestResults/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# ログ / 一時ファイル
+*.log
+*.tmp
+*.temp
+
+# ユーザー設定
+*.userprefs
+
+# MAUI 特有（生成物など）
+**/Platforms/Android/**/bin/
+**/Platforms/Android/**/obj/
+**/Platforms/iOS/**/bin/
+**/Platforms/iOS/**/obj/
+**/Platforms/MacCatalyst/**/bin/
+**/Platforms/MacCatalyst/**/obj/
+**/Platforms/Tizen/**/bin/
+**/Platforms/Tizen/**/obj/
+
+############################
+# Java / Spring Boot
+############################
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE（Java系）
+*.iml
+*.ipr
+*.iws
+out/
+
+# Spring Boot 実行Jarなど
+*.jar
+*.war
+*.ear
+*.log
+
+############################
+# その他
+############################
+# 環境変数や秘密情報
+*.env
+.env.*
+*.secret
+*.key
+*.pem
+
+# MySQL データボリューム
+mysql-data/

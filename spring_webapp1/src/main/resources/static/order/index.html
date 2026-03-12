@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>注文画面 / POS デモ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/order/style.css">
+</head>
+<body>
+<div class="app">
+    <header class="app-header">
+        <div class="app-title">
+            <span class="app-title-main">KAITSU CAFE</span>
+            <span class="app-title-sub">注文 POS デモ</span>
+        </div>
+        <div class="app-status">
+            <div class="status-item">
+                <span class="status-label">オーダー番号</span>
+                <span id="order-number" class="status-value">0001</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">担当</span>
+                <span class="status-value">STAFF-01</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <aside class="sidebar">
+            <h2 class="sidebar-title">カテゴリ</h2>
+            <div id="category-list" class="category-list">
+                <!-- JS でカテゴリボタンを挿入 -->
+            </div>
+        </aside>
+
+        <section class="menu-area">
+            <div class="menu-header">
+                <h2 id="current-category-label">すべての商品</h2>
+                <input id="search-input" class="search-input" type="search" placeholder="商品名で検索">
+            </div>
+            <div id="menu-grid" class="menu-grid">
+                <!-- JS でメニューを挿入 -->
+            </div>
+        </section>
+
+        <section class="order-area">
+            <div class="order-header">
+                <h2>注文一覧</h2>
+                <button id="clear-order-btn" class="btn ghost small">全てクリア</button>
+            </div>
+
+            <div class="order-list-wrapper">
+                <table class="order-table">
+                    <thead>
+                    <tr>
+                        <th>商品</th>
+                        <th>数量</th>
+                        <th>単価</th>
+                        <th>小計</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="order-items">
+                    <!-- JS で注文行を挿入 -->
+                    </tbody>
+                </table>
+                <div id="order-empty" class="order-empty">
+                    商品をタップして注文に追加してください。
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span>小計</span>
+                    <span id="summary-subtotal" class="summary-value">¥0</span>
+                </div>
+                <div class="summary-row">
+                    <span>税額 (10%)</span>
+                    <span id="summary-tax" class="summary-value">¥0</span>
+                </div>
+                <div class="summary-row total-row">
+                    <span>合計</span>
+                    <span id="summary-total" class="summary-value">¥0</span>
+                </div>
+            </div>
+
+            <div class="payment-area">
+                <div class="payment-left">
+                    <div class="summary-row">
+                        <span>お預かり</span>
+                        <span id="payment-received" class="summary-value">¥0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>おつり</span>
+                        <span id="payment-change" class="summary-value">¥0</span>
+                    </div>
+                </div>
+                <div class="payment-right">
+                    <div class="payment-buttons">
+                        <button class="btn primary" id="btn-cash">現金</button>
+                        <button class="btn secondary" id="btn-card">クレジット</button>
+                        <button class="btn secondary" id="btn-qr">QR</button>
+                    </div>
+                    <button class="btn accent large" id="btn-complete">
+                        会計確定
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="keypad-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>現金入力</h3>
+            <button id="keypad-close" class="icon-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="keypad-display">
+                <span>入力金額</span>
+                <span id="keypad-display-value">¥0</span>
+            </div>
+            <div class="keypad-grid">
+                <button class="keypad-key" data-key="7">7</button>
+                <button class="keypad-key" data-key="8">8</button>
+                <button class="keypad-key" data-key="9">9</button>
+                <button class="keypad-key wide" data-key="1000">+1,000</button>
+
+                <button class="keypad-key" data-key="4">4</button>
+                <button class="keypad-key" data-key="5">5</button>
+                <button class="keypad-key" data-key="6">6</button>
+                <button class="keypad-key wide" data-key="5000">+5,000</button>
+
+                <button class="keypad-key" data-key="1">1</button>
+                <button class="keypad-key" data-key="2">2</button>
+                <button class="keypad-key" data-key="3">3</button>
+                <button class="keypad-key wide" data-key="clear">クリア</button>
+
+                <button class="keypad-key zero" data-key="0">0</button>
+                <button class="keypad-key" data-key="00">00</button>
+                <button class="keypad-key" data-key="back">←</button>
+                <button class="keypad-key wide primary" data-key="enter">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/order/app.js"></script>
+</body>
+</html>
+
