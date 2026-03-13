@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
 namespace MauiApp1;
 
-public partial class App : Application
+/// <summary>
+/// アプリケーション全体のエントリポイントとなるクラス。
+/// 
+/// - MAUI の Application 基底クラスを継承する。
+/// - 名前解決の競合を避けるため、明示的に完全修飾名を指定している。
+/// </summary>
+public partial class App : Microsoft.Maui.Controls.Application
 {
 	public App()
 	{

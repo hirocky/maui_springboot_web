@@ -35,6 +35,16 @@
                 Text="オーダーする"
                 Clicked="OnOrderClicked"
                 HorizontalOptions="Fill" />
+
+            <!--
+                TODOリスト画面への遷移ボタン。
+                Home画面（MainPage）はナビゲーションの起点とし、
+                実際のTODO機能は別ページ＋MVVMで実装する。
+            -->
+            <Button
+                Text="TODOリストを開く"
+                Clicked="OnTodoClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 
