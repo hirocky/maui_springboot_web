@@ -27,6 +27,13 @@ public static class MauiProgram
 		builder.Services.AddSingleton<Domain.Repositories.ITodoRepository, Infrastructure.Data.MySqlTodoRepository>();
 		builder.Services.AddSingleton<Application.Services.TodoService>();
 
+#if WINDOWS
+		// プレゼンテーション層サービス
+		// - OS 依存のメッセージボックス表示を抽象化したサービスを DI に登録する。
+		// - ViewModel からは IMessageBoxService 経由で利用し、user32.dll には依存しない。
+		builder.Services.AddSingleton<Presentation.Services.IMessageBoxService, Infrastructure.Platform.WindowsMessageBoxService>();
+#endif
+
 		// ViewModel
 		builder.Services.AddTransient<Presentation.ViewModels.TodoListViewModel>();
 

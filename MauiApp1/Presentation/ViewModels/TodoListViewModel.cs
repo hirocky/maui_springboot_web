@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using MauiApp1.Application.Services;
 using MauiApp1.Domain.Entities;
+using MauiApp1.Presentation.Services;
 
 namespace MauiApp1.Presentation.ViewModels;
 
@@ -18,6 +19,7 @@ namespace MauiApp1.Presentation.ViewModels;
 public class TodoListViewModel : BaseViewModel
 {
     private readonly TodoService _todoService;
+    private readonly IMessageBoxService? _messageBoxService;
 
     public ObservableCollection<TodoItem> Todos { get; } = new();
 
@@ -51,9 +53,15 @@ public class TodoListViewModel : BaseViewModel
     public ICommand ToggleCompletedCommand { get; }
     public ICommand DeleteCommand { get; }
 
-    public TodoListViewModel(TodoService todoService)
+    public TodoListViewModel(
+        TodoService todoService,
+        IMessageBoxService? messageBoxService = null)
     {
         _todoService = todoService;
+        // IMessageBoxService は「OS 依存の表示ロジック」を隠蔽するための抽象。
+        // - Windows では P/Invoke を使った実装が DI コンテナに登録される。
+        // - 他プラットフォームやテスト環境では null のままでも動くようにしておく。
+        _messageBoxService = messageBoxService;
 
         // MAUI標準のCommandを利用して、UIからの操作をViewModelのメソッドにひも付ける。
         LoadCommand = new Command(async () => await LoadAsync());
@@ -89,6 +97,14 @@ public class TodoListViewModel : BaseViewModel
         var item = await _todoService.AddTodoAsync(NewTitle);
         // 新しいアイテムは先頭に追加して、最近追加したものが上に来るようにする。
         Todos.Insert(0, item);
+
+        // MVVM＋レイヤード構成的な観点では、
+        // - 「OS 標準のメッセージボックスを出す」という具体的な実装詳細はインフラ／プラットフォーム層に置き、
+        // - ViewModel からは IMessageBoxService を通じて利用する。
+        //
+        // こうすることで、ViewModel 自体は user32.dll や P/Invoke の存在を知らずに済み、
+        // 将来「別の UI フレームワーク」や「別 OS」に移植するときも差し替えが容易になる。
+        _messageBoxService?.ShowInfo($"タスクを追加しました: {item.Title}", "TODO 追加");
 
         NewTitle = string.Empty;
     }
