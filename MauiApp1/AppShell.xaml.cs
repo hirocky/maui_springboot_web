@@ -1,4 +1,6 @@
 using MauiApp1.Presentation.Pages.Habits;
+using MauiApp1.Presentation.Pages.Order;
+using MauiApp1.Presentation.Pages.Todos;
 
 namespace MauiApp1;
 

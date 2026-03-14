@@ -41,13 +41,14 @@ public static class MauiProgram
 #endif
 
 		// ViewModel
-		builder.Services.AddTransient<Presentation.ViewModels.TodoListViewModel>();
+		builder.Services.AddTransient<Presentation.ViewModels.Todos.TodoListViewModel>();
 		builder.Services.AddTransient<Presentation.ViewModels.Habits.TodayTasksViewModel>();
 		builder.Services.AddTransient<Presentation.ViewModels.Habits.ProgressReportViewModel>();
 		builder.Services.AddTransient<Presentation.ViewModels.Habits.HabitListViewModel>();
 
 		// View（ページ）
-		builder.Services.AddTransient<TodoListPage>();
+		builder.Services.AddTransient<Presentation.Pages.Todos.TodoListPage>();
+		builder.Services.AddTransient<Presentation.Pages.Order.OrderPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.TodayTasksPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.ProgressReportPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.HabitListPage>();

@@ -23,18 +23,16 @@ public partial class MainPage : ContentPage
 
 	private async void OnOrderClicked(object? sender, EventArgs e)
 	{
-		await Shell.Current.GoToAsync(nameof(OrderPage));
+		await Shell.Current.GoToAsync("OrderPage");
 	}
 
 	/// <summary>
 	/// TODOリスト画面へ遷移するボタンのクリックイベント。
-	///
-	/// View（MainPage）は、単に「どの画面へ遷移するか」を決めるだけ。
 	/// 実際のTODO管理ロジックは、TodoListPage＋TodoListViewModel側に集約する。
 	/// </summary>
 	private async void OnTodoClicked(object? sender, EventArgs e)
 	{
-		await Shell.Current.GoToAsync(nameof(TodoListPage));
+		await Shell.Current.GoToAsync("TodoListPage");
 	}
 
 	/// <summary>

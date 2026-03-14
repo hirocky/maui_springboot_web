@@ -4,12 +4,13 @@ using Microsoft.Maui.Controls;
 using MauiApp1.Application.Services;
 using MauiApp1.Domain.Entities;
 using MauiApp1.Presentation.Services;
+using MauiApp1.Presentation.ViewModels;
 
-namespace MauiApp1.Presentation.ViewModels;
+namespace MauiApp1.Presentation.ViewModels.Todos;
 
 /// <summary>
 /// TODOリスト画面用のViewModel。
-/// 
+///
 /// - 「プレゼンテーション層」に位置し、画面ロジックを担当する。
 /// - DBやWebViewなどの具体的な実装詳細には直接触れず、
 ///   アプリケーションサービス（TodoService）を通じてドメインの操作を行う。
@@ -134,4 +135,3 @@ public class TodoListViewModel : BaseViewModel
         Todos.Remove(item);
     }
 }
-

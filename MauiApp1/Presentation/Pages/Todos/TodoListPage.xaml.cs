@@ -1,10 +1,10 @@
-using MauiApp1.Presentation.ViewModels;
+using MauiApp1.Presentation.ViewModels.Todos;
 
-namespace MauiApp1;
+namespace MauiApp1.Presentation.Pages.Todos;
 
 /// <summary>
 /// TODOリスト画面のView。
-/// 
+///
 /// - XAMLで定義したレイアウトに対応するコードビハインド。
 /// - MVVMでは、ここには「ナビゲーションやライフサイクルなど、Viewに密接な処理」のみを書く。
 /// - ビジネスロジックやDBアクセスはViewModelやサービスに委譲する。
@@ -26,4 +26,3 @@ public partial class TodoListPage : ContentPage
         };
     }
 }
-
