@@ -1,4 +1,4 @@
-using MauiApp1.Presentation.ViewModels;
+using MauiApp1.Presentation.ViewModels.Habits;
 
 namespace MauiApp1.Presentation.Pages.Habits;
 

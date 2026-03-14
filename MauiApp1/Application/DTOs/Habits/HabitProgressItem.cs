@@ -1,6 +1,6 @@
 using MauiApp1.Domain.Entities;
 
-namespace MauiApp1.Application.DTOs;
+namespace MauiApp1.Application.DTOs.Habits;
 
 /// <summary>
 /// 進捗レポート画面用の1習慣あたりの集計結果を表す DTO。

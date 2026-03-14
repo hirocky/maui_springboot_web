@@ -1,4 +1,4 @@
-using MauiApp1.Application.DTOs;
+using MauiApp1.Application.DTOs.Habits;
 using MauiApp1.Domain.Entities;
 using MauiApp1.Domain.Repositories;
 

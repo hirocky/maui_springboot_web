@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using MauiApp1.Application.DTOs;
+using MauiApp1.Application.DTOs.Habits;
 using MauiApp1.Application.Services;
+using MauiApp1.Presentation.ViewModels;
 
-namespace MauiApp1.Presentation.ViewModels;
+namespace MauiApp1.Presentation.ViewModels.Habits;
 
 /// <summary>
 /// 「今日タスク」画面用の ViewModel。

@@ -1,4 +1,4 @@
-namespace MauiApp1.Application.DTOs;
+namespace MauiApp1.Application.DTOs.Habits;
 
 /// <summary>
 /// 習慣登録画面の色 Picker 用の表示用オプション。

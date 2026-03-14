@@ -1,6 +1,6 @@
 using MauiApp1.Domain.Entities;
 
-namespace MauiApp1.Application.DTOs;
+namespace MauiApp1.Application.DTOs.Habits;
 
 /// <summary>
 /// 「今日タスク」画面の1行分のデータを表す DTO。
