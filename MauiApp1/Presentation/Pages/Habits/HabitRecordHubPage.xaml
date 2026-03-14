@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Presentation.Pages.Habits.HabitRecordHubPage"
+             Title="習慣記録">
+
+    <!--
+        習慣記録のハブ画面。
+        Home の「習慣記録」ボタンから遷移し、
+        習慣登録・今日のタスク・進捗レポートの各画面へ遷移する。
+    -->
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="24"
+            Spacing="20">
+
+            <Label
+                Text="習慣記録"
+                FontSize="28"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                Margin="0,10,0,20" />
+
+            <Label
+                Text="毎日やりたいことの達成を記録します。"
+                FontSize="14"
+                TextColor="Gray"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center" />
+
+            <!-- 習慣登録: 習慣の追加・一覧 -->
+            <Button
+                Text="習慣登録"
+                Clicked="OnHabitListClicked"
+                HorizontalOptions="Fill"
+                Padding="16,12" />
+
+            <!-- 今日のタスク: 今日やるべき習慣のチェックリスト -->
+            <Button
+                Text="今日のタスク"
+                Clicked="OnTodayTasksClicked"
+                HorizontalOptions="Fill"
+                Padding="16,12" />
+
+            <!-- 進捗レポート: 達成率・カレンダー表示 -->
+            <Button
+                Text="進捗レポート"
+                Clicked="OnProgressReportClicked"
+                HorizontalOptions="Fill"
+                Padding="16,12" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

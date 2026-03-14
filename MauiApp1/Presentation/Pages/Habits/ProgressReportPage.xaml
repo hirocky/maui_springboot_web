@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Presentation.Pages.Habits.ProgressReportPage"
+             Title="進捗レポート">
+
+    <!--
+        進捗レポート画面（View）。
+        各習慣の達成率と、対象期間内の達成日を表示する。
+        - ProgressItems: HabitProgressItem のリスト（習慣名、達成率、達成日一覧）
+        - 達成率は 0～100% で表示し、カレンダー風には「達成した日」を列挙する簡易表示とする
+    -->
+
+    <VerticalStackLayout Padding="20" Spacing="16">
+
+        <Label
+            Text="習慣の進捗レポート"
+            FontSize="24"
+            HorizontalOptions="Center" />
+
+        <Label
+            Text="{Binding PeriodFrom, StringFormat='期間: {0:yyyy/MM/dd}'}"
+            FontSize="12"
+            HorizontalOptions="Center"
+            TextColor="Gray" />
+        <Label
+            Text="{Binding PeriodTo, StringFormat=' ～ {0:yyyy/MM/dd}'}"
+            FontSize="12"
+            HorizontalOptions="Center"
+            TextColor="Gray" />
+
+        <Button
+            Text="再読み込み"
+            Command="{Binding LoadCommand}"
+            HorizontalOptions="Fill" />
+
+        <ScrollView>
+            <CollectionView
+                ItemsSource="{Binding ProgressItems}"
+                Margin="0,10,0,0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Stroke="#ccc"
+                            StrokeThickness="1"
+                            Padding="12"
+                            Margin="0,0,0,12">
+                            <VerticalStackLayout Spacing="8">
+                                <!-- 習慣名と色 -->
+                                <HorizontalStackLayout Spacing="8">
+                                    <BoxView
+                                        HeightRequest="8"
+                                        WidthRequest="8"
+                                        Color="{Binding Habit.ColorHex}"
+                                        CornerRadius="4"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Text="{Binding Habit.Name}"
+                                        FontSize="18"
+                                        FontAttributes="Bold"
+                                        VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <!-- 達成率（0～100%）。P0 はパーセント表示で小数なし -->
+                                <Label
+                                    Text="{Binding AchievementRate, StringFormat='達成率: {0:P0}'}"
+                                    FontSize="14" />
+                                <!-- 達成した日一覧（カレンダー風の簡易表示） -->
+                                <Label
+                                    Text="{Binding CheckInDates, Converter={StaticResource CheckInDatesToTextConverter}}"
+                                    FontSize="12"
+                                    TextColor="Gray"
+                                    LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+    </VerticalStackLayout>
+
+</ContentPage>

@@ -27,6 +27,12 @@ public static class MauiProgram
 		builder.Services.AddSingleton<Domain.Repositories.ITodoRepository, Infrastructure.Data.MySqlTodoRepository>();
 		builder.Services.AddSingleton<Application.Services.TodoService>();
 
+		// 習慣（ルーチン）機能: カテゴリ・習慣・チェックインのリポジトリとアプリケーションサービス。
+		builder.Services.AddSingleton<Domain.Repositories.ICategoryRepository, Infrastructure.Data.MySqlCategoryRepository>();
+		builder.Services.AddSingleton<Domain.Repositories.IHabitRepository, Infrastructure.Data.MySqlHabitRepository>();
+		builder.Services.AddSingleton<Domain.Repositories.ICheckInRepository, Infrastructure.Data.MySqlCheckInRepository>();
+		builder.Services.AddSingleton<Application.Services.HabitService>();
+
 #if WINDOWS
 		// プレゼンテーション層サービス
 		// - OS 依存のメッセージボックス表示を抽象化したサービスを DI に登録する。
@@ -36,10 +42,16 @@ public static class MauiProgram
 
 		// ViewModel
 		builder.Services.AddTransient<Presentation.ViewModels.TodoListViewModel>();
+		builder.Services.AddTransient<Presentation.ViewModels.TodayTasksViewModel>();
+		builder.Services.AddTransient<Presentation.ViewModels.ProgressReportViewModel>();
+		builder.Services.AddTransient<Presentation.ViewModels.HabitListViewModel>();
 
 		// View（ページ）
 		builder.Services.AddTransient<TodoListPage>();
-
+		builder.Services.AddTransient<Presentation.Pages.Habits.TodayTasksPage>();
+		builder.Services.AddTransient<Presentation.Pages.Habits.ProgressReportPage>();
+		builder.Services.AddTransient<Presentation.Pages.Habits.HabitListPage>();
+		builder.Services.AddTransient<Presentation.Pages.Habits.HabitRecordHubPage>();
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif

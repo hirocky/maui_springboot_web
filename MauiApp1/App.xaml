@@ -11,8 +11,9 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- TODO画面用のコンバーターをアプリ全体のリソースとして登録 -->
+            <!-- 画面用コンバーターをアプリ全体のリソースとして登録 -->
             <converters:BoolToStatusTextConverter x:Key="BoolToStatusTextConverter" />
+            <converters:CheckInDatesToTextConverter x:Key="CheckInDatesToTextConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

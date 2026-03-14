@@ -45,6 +45,14 @@
                 Text="TODOリストを開く"
                 Clicked="OnTodoClicked"
                 HorizontalOptions="Fill" />
+
+            <!--
+                習慣記録へ遷移。遷移先のハブ画面から「習慣登録」「今日のタスク」「進捗レポート」を選択する。
+            -->
+            <Button
+                Text="習慣記録"
+                Clicked="OnHabitRecordClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

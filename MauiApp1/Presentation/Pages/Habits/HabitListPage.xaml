@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Presentation.Pages.Habits.HabitListPage"
+             x:Name="HabitListPageRoot"
+             Title="習慣登録">
+
+    <!--
+        習慣登録画面（View）。
+        上部に新規追加フォーム（名前・カテゴリ・色・目標頻度）、下部に習慣一覧と削除ボタン。
+    -->
+
+    <VerticalStackLayout Padding="20" Spacing="16">
+
+        <Label
+            Text="習慣を追加"
+            FontSize="22"
+            FontAttributes="Bold" />
+
+        <Entry
+            Text="{Binding NewHabitName}"
+            Placeholder="習慣名（例: 朝のストレッチ）"
+            HorizontalOptions="Fill" />
+
+        <Label Text="カテゴリ" FontSize="12" TextColor="Gray" />
+        <Picker
+            ItemsSource="{Binding CategoryOptions}"
+            ItemDisplayBinding="{Binding Name}"
+            SelectedItem="{Binding SelectedCategoryOption}"
+            HorizontalOptions="Fill" />
+
+        <Label Text="色" FontSize="12" TextColor="Gray" />
+        <Picker
+            ItemsSource="{Binding ColorOptions}"
+            ItemDisplayBinding="{Binding Name}"
+            SelectedItem="{Binding SelectedColorOption}"
+            HorizontalOptions="Fill" />
+
+        <Label Text="目標頻度" FontSize="12" TextColor="Gray" />
+        <Picker
+            ItemsSource="{Binding FrequencyOptions}"
+            ItemDisplayBinding="{Binding DisplayName}"
+            SelectedItem="{Binding SelectedFrequencyOption}"
+            HorizontalOptions="Fill" />
+
+        <Button
+            Text="追加"
+            Command="{Binding AddCommand}"
+            HorizontalOptions="Fill" />
+
+        <BoxView HeightRequest="1" Color="#eee" Margin="0,8,0,8" />
+
+        <Label
+            Text="登録済みの習慣"
+            FontSize="18"
+            FontAttributes="Bold"
+            Margin="0,8,0,0" />
+
+        <CollectionView
+            ItemsSource="{Binding Habits}"
+            Margin="0,8,0,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        Padding="12"
+                        Margin="0,0,0,8">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                                <BoxView
+                                    WidthRequest="12"
+                                    HeightRequest="12"
+                                    Color="{Binding ColorHex}"
+                                    CornerRadius="6"
+                                    VerticalOptions="Center" />
+                                <VerticalStackLayout Spacing="2">
+                                    <Label
+                                        Text="{Binding Name}"
+                                        FontSize="16"
+                                        VerticalOptions="Start" />
+                                    <Label
+                                        FontSize="12"
+                                        TextColor="Gray">
+                                        <Label.Text>
+                                            <Binding Path="TargetFrequencyPerWeek" StringFormat="目標: 週{0}回" />
+                                        </Label.Text>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                            <Button
+                                Grid.Column="1"
+                                Text="削除"
+                                TextColor="Red"
+                                Command="{Binding BindingContext.DeleteCommand, Source={x:Reference HabitListPageRoot}}"
+                                CommandParameter="{Binding .}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>

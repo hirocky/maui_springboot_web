@@ -28,12 +28,22 @@ public partial class MainPage : ContentPage
 
 	/// <summary>
 	/// TODOリスト画面へ遷移するボタンのクリックイベント。
-	/// 
-	/// - View（MainPage）は、単に「どの画面へ遷移するか」を決めるだけ。
-	/// - 実際のTODO管理ロジックは、TodoListPage＋TodoListViewModel側に集約する。
+	///
+	/// View（MainPage）は、単に「どの画面へ遷移するか」を決めるだけ。
+	/// 実際のTODO管理ロジックは、TodoListPage＋TodoListViewModel側に集約する。
 	/// </summary>
 	private async void OnTodoClicked(object? sender, EventArgs e)
 	{
 		await Shell.Current.GoToAsync(nameof(TodoListPage));
+	}
+
+	/// <summary>
+	/// 習慣記録のハブ画面へ遷移する。
+	/// ハブ画面から習慣登録・今日のタスク・進捗レポートの各画面へ遷移できる。
+	/// 遷移先は AppShell で登録したルート名で指定（View は Habits フォルダに集約済み）。
+	/// </summary>
+	private async void OnHabitRecordClicked(object? sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("HabitRecordHubPage");
 	}
 }
