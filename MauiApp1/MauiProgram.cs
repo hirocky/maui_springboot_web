@@ -38,6 +38,10 @@ public static class MauiProgram
 		// - OS 依存のメッセージボックス表示を抽象化したサービスを DI に登録する。
 		// - ViewModel からは IMessageBoxService 経由で利用し、user32.dll には依存しない。
 		builder.Services.AddSingleton<Presentation.Services.IMessageBoxService, Infrastructure.Platform.WindowsMessageBoxService>();
+		// TM レシート（APD5 + RAW ESC/POS）。Windows 以外では Null 実装を登録する。
+		builder.Services.AddSingleton<Presentation.Services.IEpsonReceiptPrintService, Infrastructure.Platform.WindowsEpsonReceiptPrintService>();
+#else
+		builder.Services.AddSingleton<Presentation.Services.IEpsonReceiptPrintService, Infrastructure.Platform.NullEpsonReceiptPrintService>();
 #endif
 
 		// ViewModel
@@ -49,6 +53,7 @@ public static class MauiProgram
 		// View（ページ）
 		builder.Services.AddTransient<Presentation.Pages.Todos.TodoListPage>();
 		builder.Services.AddTransient<Presentation.Pages.Order.OrderPage>();
+		builder.Services.AddTransient<Presentation.Pages.Receipt.ReceiptPrintPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.TodayTasksPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.ProgressReportPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.HabitListPage>();

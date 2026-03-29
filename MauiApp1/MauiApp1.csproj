@@ -6,9 +6,11 @@
 
 		<!-- net10.0: 単体テストプロジェクトから参照するためのライブラリ出力 -->
 		<OutputType Condition="'$(TargetFramework)' == 'net10.0'">Library</OutputType>
-		<!-- net10.0 ビルド時の自動生成アセンブリ属性の重複を防ぐ -->
+		<!-- net10.0 / Windows: SDK と MAUI・Windows ワークロード双方で AssemblyInfo が生成され重複するのを防ぐ -->
 		<GenerateTargetFrameworkAttribute Condition="'$(TargetFramework)' == 'net10.0'">false</GenerateTargetFrameworkAttribute>
 		<GenerateAssemblyInfo Condition="'$(TargetFramework)' == 'net10.0'">false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">false</GenerateTargetFrameworkAttribute>
+		<GenerateAssemblyInfo Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">false</GenerateAssemblyInfo>
 
 		<!-- Note for MacCatalyst:
 		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -68,6 +70,8 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<!-- MySQL への接続に利用する軽量な ADO.NET プロバイダ -->
 		<PackageReference Include="MySqlConnector" Version="2.3.7" />
+		<!-- レシート印字: Shift_JIS（CP932） -->
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />
 	</ItemGroup>
 
 </Project>
