@@ -71,7 +71,7 @@ public class HabitListViewModel : BaseViewModel
         _messageBoxService = messageBoxService;
         LoadCommand = new Command(async () => await LoadAsync());
         AddCommand = new Command(async () => await AddAsync());
-        DeleteCommand = new Command<Habit>(async h => await DeleteAsync(h));
+        DeleteCommand = new Command(async (object? p) => await DeleteAsync(p as Habit));
 
         // 色プリセット（Picker の表示名とヘックス値）
         ColorOptions.Add(new ColorOption { Name = "紫", Hex = "#6200EE" });

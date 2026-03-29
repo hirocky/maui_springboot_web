@@ -70,8 +70,6 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<!-- MySQL への接続に利用する軽量な ADO.NET プロバイダ -->
 		<PackageReference Include="MySqlConnector" Version="2.3.7" />
-		<!-- レシート印字: Shift_JIS（CP932） -->
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />
 	</ItemGroup>
 
 </Project>

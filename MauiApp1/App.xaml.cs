@@ -13,8 +13,17 @@ public partial class App : Microsoft.Maui.Controls.Application
 		InitializeComponent();
 	}
 
+#if WINDOWS
+	protected override Window CreateWindow(IActivationState? activationState)
+	{
+		var window = new Window(new AppShell());
+		window.Created += (_, _) => Infrastructure.Platform.WindowsWindowLayout.PlaceHomeLauncher(window);
+		return window;
+	}
+#else
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
 		return new Window(new AppShell());
 	}
+#endif
 }

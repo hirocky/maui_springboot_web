@@ -70,8 +70,8 @@ public class TodoListViewModel : BaseViewModel
         // 追加ボタンの有効/無効制御は、AddAsync 内で NewTitle を検証するだけにして、
         // Button 側は常に押せるようにしておく（学習しやすさ・挙動の分かりやすさを優先）。
         AddCommand = new Command(async () => await AddAsync());
-        ToggleCompletedCommand = new Command<TodoItem>(async item => await ToggleCompletedAsync(item));
-        DeleteCommand = new Command<TodoItem>(async item => await DeleteAsync(item));
+        ToggleCompletedCommand = new Command(async (object? p) => await ToggleCompletedAsync(p as TodoItem));
+        DeleteCommand = new Command(async (object? p) => await DeleteAsync(p as TodoItem));
     }
 
     /// <summary>

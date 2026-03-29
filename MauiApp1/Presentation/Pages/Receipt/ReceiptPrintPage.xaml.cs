@@ -61,11 +61,11 @@ public partial class ReceiptPrintPage : ContentPage
         try
         {
             await _receiptPrintService.PrintAndCutAsync(text, printerName);
-            await DisplayAlert("印刷", "送信しました。プリンターが応答しない場合はドライバー名や RAW 可否を確認してください。", "OK");
+            await DisplayAlertAsync("印刷", "送信しました。プリンターが応答しない場合はドライバー名や RAW 可否を確認してください。", "OK");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("印刷エラー", ex.Message, "OK");
+            await DisplayAlertAsync("印刷エラー", ex.Message, "OK");
         }
     }
 }

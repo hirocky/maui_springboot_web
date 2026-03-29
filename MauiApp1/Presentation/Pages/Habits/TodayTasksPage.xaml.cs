@@ -1,4 +1,5 @@
 using MauiApp1.Presentation.ViewModels.Habits;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MauiApp1.Presentation.Pages.Habits;
 
@@ -9,12 +10,15 @@ namespace MauiApp1.Presentation.Pages.Habits;
 /// ビジネスロジックやデータ取得は TodayTasksViewModel に委譲する。
 /// - BindingContext に DI で受け取った ViewModel をセット
 /// - Loaded 時に ViewModel.LoadAsync を呼び出して一覧を表示
-/// - 「進捗レポートを見る」は Shell ナビゲーションで遷移
+/// - 「進捗レポートを見る」は Windows では同一サブウィンドウへ Push、それ以外は Shell 遷移
 /// </summary>
 public partial class TodayTasksPage : ContentPage
 {
-    public TodayTasksPage(TodayTasksViewModel viewModel)
+    private readonly IServiceProvider _services;
+
+    public TodayTasksPage(TodayTasksViewModel viewModel, IServiceProvider services)
     {
+        _services = services;
         InitializeComponent();
         BindingContext = viewModel;
 
@@ -27,10 +31,13 @@ public partial class TodayTasksPage : ContentPage
     }
 
     /// <summary>
-    /// 進捗レポート画面へ遷移する。遷移先は AppShell で登録したルート名で指定する。
+    /// 進捗レポート画面へ遷移する（同一サブウィンドウのナビゲーションスタック上へ Push）。
     /// </summary>
     private async void OnOpenProgressReportClicked(object? sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(ProgressReportPage));
+        if (OperatingSystem.IsWindows())
+            await Navigation.PushAsync(_services.GetRequiredService<ProgressReportPage>());
+        else
+            await Shell.Current.GoToAsync(nameof(ProgressReportPage));
     }
 }

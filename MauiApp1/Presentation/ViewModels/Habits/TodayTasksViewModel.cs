@@ -55,7 +55,7 @@ public class TodayTasksViewModel : BaseViewModel
         _habitService = habitService;
 
         LoadCommand = new Command(async () => await LoadAsync());
-        ToggleCheckCommand = new Command<TodayHabitItem>(async item => await ToggleCheckAsync(item));
+        ToggleCheckCommand = new Command(async (object? p) => await ToggleCheckAsync(p as TodayHabitItem));
     }
 
     /// <summary>

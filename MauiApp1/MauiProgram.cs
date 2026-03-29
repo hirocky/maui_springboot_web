@@ -33,6 +33,9 @@ public static class MauiProgram
 		builder.Services.AddSingleton<Domain.Repositories.ICheckInRepository, Infrastructure.Data.MySqlCheckInRepository>();
 		builder.Services.AddSingleton<Application.Services.HabitService>();
 
+		// 機能画面をサブウィンドウで開く（Windows ではサブは 1 つだけ・内容差し替え。ホームは App.CreateWindow で右上狭幅。他は Shell 遷移）。
+		builder.Services.AddSingleton<Presentation.Services.IFeatureWindowService, Presentation.Services.FeatureWindowService>();
+
 #if WINDOWS
 		// プレゼンテーション層サービス
 		// - OS 依存のメッセージボックス表示を抽象化したサービスを DI に登録する。
