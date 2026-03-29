@@ -29,7 +29,7 @@ public class MySqlTodoRepository : ITodoRepository
         //   - スキーマ（DB 名）: appdb
         //
         _connectionString =
-            "Server=localhost;Port=3306;Database=appdb;User Id=appuser;Password=apppass;SslMode=None;";
+            "Server=localhost;Port=3306;Database=appdb;User Id=appuser;Password=apppass;SslMode=None;AllowPublicKeyRetrieval=True;";
     }
 
     /// <summary>

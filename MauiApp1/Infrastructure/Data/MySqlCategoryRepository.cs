@@ -13,7 +13,7 @@ namespace MauiApp1.Infrastructure.Data;
 public class MySqlCategoryRepository : ICategoryRepository
 {
     private readonly string _connectionString =
-        "Server=localhost;Port=3306;Database=appdb;User Id=appuser;Password=apppass;SslMode=None;";
+        "Server=localhost;Port=3306;Database=appdb;User Id=appuser;Password=apppass;SslMode=None;AllowPublicKeyRetrieval=True;";
 
     private MySqlConnection CreateConnection() => new MySqlConnection(_connectionString);
 
