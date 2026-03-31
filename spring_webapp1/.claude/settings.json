@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew bootRun)",
+      "Read(//c/Users/h_kub/AppData/Local/Temp/claude/c--Users-h-kub-dev-kaikatsu-club-apps-pep-spring-webapp1/0ee3ff2c-11a5-4a67-820b-4cd17e5d168f/tasks/**)",
+      "Bash(java -version)",
+      "Bash(javac -version)",
+      "Bash(./gradlew --version)",
+      "Bash(scoop install:*)",
+      "Bash(JAVA_HOME=\"$HOME/scoop/apps/openjdk21/current\" PATH=\"$JAVA_HOME/bin:$PATH\" java -version)",
+      "Bash(JAVA_HOME=\"$HOME/scoop/apps/openjdk21/current\" PATH=\"$JAVA_HOME/bin:$PATH\" ./gradlew bootRun)",
+      "Bash(netstat -ano)",
+      "Read(//c/Users/h_kub/dev/kaikatsu_club/apps/pep/spring_webapp1/**)",
+      "Bash(xargs -I{} taskkill /PID {} /F)",
+      "Bash(taskkill /PID 47892 /F)",
+      "Bash(cmd.exe /c \"taskkill /PID 47892 /F\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 47892 -Force\")",
+      "Read(//c/Users/h_kub/dev/kaikatsu_club/apps/pep/MauiApp1/Infrastructure/Platform/**)",
+      "Read(//c/Users/h_kub/dev/kaikatsu_club/apps/pep/MauiApp1/Presentation/Pages/Receipt/**)",
+      "Bash(powershell.exe -Command \"Get-NetTCPConnection -LocalPort 8080 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_-Force -ErrorAction SilentlyContinue }\")",
+      "Bash(powershell.exe -Command \":*)",
+      "Bash(powershell.exe -Command \"$p = \\(Get-NetTCPConnection -LocalPort 8080 -EA SilentlyContinue\\).OwningProcess | Select-Object -First 1; if \\($p\\) { Stop-Process -Id $p -Force; ''killed ''$p } else { ''none'' }\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 31888 -Force\")"
+    ]
+  }
+}

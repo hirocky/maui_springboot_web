@@ -84,68 +84,13 @@
                 </div>
             </div>
 
-            <div class="payment-area">
-                <div class="payment-left">
-                    <div class="summary-row">
-                        <span>お預かり</span>
-                        <span id="payment-received" class="summary-value">¥0</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>おつり</span>
-                        <span id="payment-change" class="summary-value">¥0</span>
-                    </div>
-                </div>
-                <div class="payment-right">
-                    <div class="payment-buttons">
-                        <button class="btn primary" id="btn-cash">現金</button>
-                        <button class="btn secondary" id="btn-card">クレジット</button>
-                        <button class="btn secondary" id="btn-qr">QR</button>
-                    </div>
-                    <button class="btn accent large" id="btn-complete">
-                        会計確定
-                    </button>
-                </div>
+            <div class="order-actions">
+                <button class="btn accent large" id="btn-order">注文</button>
             </div>
         </section>
     </main>
 </div>
 
-<div id="keypad-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>現金入力</h3>
-            <button id="keypad-close" class="icon-button">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="keypad-display">
-                <span>入力金額</span>
-                <span id="keypad-display-value">¥0</span>
-            </div>
-            <div class="keypad-grid">
-                <button class="keypad-key" data-key="7">7</button>
-                <button class="keypad-key" data-key="8">8</button>
-                <button class="keypad-key" data-key="9">9</button>
-                <button class="keypad-key wide" data-key="1000">+1,000</button>
-
-                <button class="keypad-key" data-key="4">4</button>
-                <button class="keypad-key" data-key="5">5</button>
-                <button class="keypad-key" data-key="6">6</button>
-                <button class="keypad-key wide" data-key="5000">+5,000</button>
-
-                <button class="keypad-key" data-key="1">1</button>
-                <button class="keypad-key" data-key="2">2</button>
-                <button class="keypad-key" data-key="3">3</button>
-                <button class="keypad-key wide" data-key="clear">クリア</button>
-
-                <button class="keypad-key zero" data-key="0">0</button>
-                <button class="keypad-key" data-key="00">00</button>
-                <button class="keypad-key" data-key="back">←</button>
-                <button class="keypad-key wide primary" data-key="enter">決定</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div id="toast" class="toast hidden"></div>
 

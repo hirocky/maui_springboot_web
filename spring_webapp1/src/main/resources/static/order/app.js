@@ -28,7 +28,6 @@
     search: '',
     orderItems: [],
     orderNumber: 1,
-    keypadValue: '',
   };
 
   const el = {
@@ -42,17 +41,8 @@
     summaryTax: document.getElementById('summary-tax'),
     summaryTotal: document.getElementById('summary-total'),
     clearOrderBtn: document.getElementById('clear-order-btn'),
-    btnCash: document.getElementById('btn-cash'),
-    btnCard: document.getElementById('btn-card'),
-    btnQr: document.getElementById('btn-qr'),
-    btnComplete: document.getElementById('btn-complete'),
+    btnOrder: document.getElementById('btn-order'),
     orderNumber: document.getElementById('order-number'),
-    paymentReceived: document.getElementById('payment-received'),
-    paymentChange: document.getElementById('payment-change'),
-    keypadModal: document.getElementById('keypad-modal'),
-    keypadClose: document.getElementById('keypad-close'),
-    keypadDisplayValue: document.getElementById('keypad-display-value'),
-    keypadKeys: document.querySelectorAll('.keypad-key'),
     toast: document.getElementById('toast'),
   };
 
@@ -209,100 +199,35 @@
     el.summaryTax.textContent = formatYen(tax);
     el.summaryTotal.textContent = formatYen(total);
 
-    const hasOrder = total > 0;
-    el.btnCash.disabled = !hasOrder;
-    el.btnCard.disabled = !hasOrder;
-    el.btnQr.disabled = !hasOrder;
-    el.btnComplete.disabled = !hasOrder;
+    el.btnOrder.disabled = total === 0;
   }
 
-  function openKeypad() {
-    const { total } = calcSummary();
+  async function placeOrder() {
+    const { subtotal, tax, total } = calcSummary();
     if (!total) return;
-    state.keypadValue = String(total);
-    updateKeypadDisplay();
-    el.keypadModal.classList.remove('hidden');
-  }
-
-  function closeKeypad() {
-    el.keypadModal.classList.add('hidden');
-  }
-
-  function updateKeypadDisplay() {
-    const value = Number(state.keypadValue || '0');
-    el.keypadDisplayValue.textContent = formatYen(value);
-  }
-
-  function handleKeypadKey(key) {
-    if (key === 'clear') {
-      state.keypadValue = '';
-      updateKeypadDisplay();
-      return;
+    el.btnOrder.disabled = true;
+    const orderNumber = String(state.orderNumber).padStart(4, '0');
+    const payload = {
+      orderNumber,
+      items: state.orderItems.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+      subtotal,
+      tax,
+      total,
+    };
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('server error');
+      showToast(`注文を送信しました（#${orderNumber}）`);
+      clearOrder();
+      nextOrderNumber();
+    } catch {
+      showToast('注文の送信に失敗しました');
+      el.btnOrder.disabled = false;
     }
-    if (key === 'back') {
-      state.keypadValue = state.keypadValue.slice(0, -1);
-      updateKeypadDisplay();
-      return;
-    }
-    if (key === '1000' || key === '5000') {
-      const add = Number(key);
-      const current = Number(state.keypadValue || '0');
-      state.keypadValue = String(current + add);
-      updateKeypadDisplay();
-      return;
-    }
-    if (key === 'enter') {
-      applyPayment();
-      closeKeypad();
-      return;
-    }
-    if (key === '00') {
-      state.keypadValue = (state.keypadValue || '0') + '00';
-      updateKeypadDisplay();
-      return;
-    }
-    if (/^[0-9]$/.test(key)) {
-      if (state.keypadValue === '0') {
-        state.keypadValue = key;
-      } else {
-        state.keypadValue += key;
-      }
-      updateKeypadDisplay();
-    }
-  }
-
-  function applyPayment() {
-    const { total } = calcSummary();
-    const received = Number(state.keypadValue || '0');
-    if (!total) return;
-    if (received < total) {
-      showToast('金額が不足しています');
-      return;
-    }
-    const change = received - total;
-    el.paymentReceived.textContent = formatYen(received);
-    el.paymentChange.textContent = formatYen(change);
-    showToast('現金入力を反映しました');
-  }
-
-  function completePayment(method) {
-    const { total } = calcSummary();
-    if (!total) return;
-    if (method === 'CASH') {
-      const received = Number(state.keypadValue || '0');
-      if (received < total) {
-        showToast('現金金額を入力してください');
-        openKeypad();
-        return;
-      }
-    }
-    const label = method === 'CARD' ? 'クレジット' : method === 'QR' ? 'QR' : '現金';
-    showToast(`会計を確定しました（${label}）`);
-    clearOrder();
-    el.paymentReceived.textContent = formatYen(0);
-    el.paymentChange.textContent = formatYen(0);
-    state.keypadValue = '';
-    nextOrderNumber();
   }
 
   function bindEvents() {
@@ -320,24 +245,7 @@
       showToast('注文をクリアしました');
     });
 
-    el.btnCash.addEventListener('click', () => openKeypad());
-    el.btnCard.addEventListener('click', () => completePayment('CARD'));
-    el.btnQr.addEventListener('click', () => completePayment('QR'));
-    el.btnComplete.addEventListener('click', () => completePayment('CASH'));
-
-    el.keypadClose.addEventListener('click', () => closeKeypad());
-    el.keypadModal.addEventListener('click', (e) => {
-      if (e.target === el.keypadModal || e.target === el.keypadModal.querySelector('.modal-backdrop')) {
-        closeKeypad();
-      }
-    });
-
-    el.keypadKeys.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.key;
-        handleKeypadKey(key);
-      });
-    });
+    el.btnOrder.addEventListener('click', () => placeOrder());
   }
 
   function init() {
