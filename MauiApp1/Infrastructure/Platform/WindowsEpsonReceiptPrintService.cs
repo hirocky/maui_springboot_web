@@ -1,3 +1,7 @@
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using MauiApp1.Presentation.Services;
@@ -15,15 +19,32 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
     private const string JapaneseFontName = "MS ゴシック";
     private const int ShiftJisCharset = 128;
     private const int FwNormal = 400;
+    private const int FwBold = 700;
+    /// <summary>行頭に付けると GDI 印字で太字（MS ゴシック Bold）になるマーカー。印字時に除去される。</summary>
+    private const string BoldLinePrefix = "[B]";
+    /// <summary>行頭に付けると用紙幅に対して中央寄せ。印字時に除去。太字と併用する場合は <c>[B]</c> を先に付ける。</summary>
+    private const string CenterLinePrefix = "[C]";
+    /// <summary>行頭に付けると用紙幅に対して右寄せ。印字時に除去。太字と併用する場合は <c>[B]</c> を先に付ける。</summary>
+    private const string RightLinePrefix = "[R]";
+    /// <summary>行頭に付けると用紙幅に対して左項目は左寄せ・右項目は右寄せ（形式: [LR]左|右）。太字と併用する場合は <c>[B]</c> を先に付ける。</summary>
+    private const string LeftRightLinePrefix = "[LR]";
+    private const char LeftRightSeparator = '|';
+    /// <summary>行頭に付けると本文を大きめのポイントで印字（<c>[B]</c> / <c>[C]</c> / <c>[R]</c> と組み合わせ可。先頭の <c>[B]</c> の直後、または <c>[C]</c>/<c>[R]</c> の直後に付ける。</summary>
+    private const string LargeLinePrefix = "[L]";
     private const int TextFontSizePt = 9;
+    private const int LargeTextFontSizePt = 14;
     private const int LogPixelsY = 90;
+    /// <summary>可印字領域の幅（ピクセル）を得るときの GetDeviceCaps nIndex（HORZRES）。</summary>
+    private const int HorzRes = 8;
     /// <summary>上端余白（行数単位で指定）。増減で調整。</summary>
     private const int TopMarginLines = 1;
     /// <summary>下端余白（行数単位で指定）。増減で調整。</summary>
     private const int BottomMarginLines = 1;
+    /// <summary>ロゴ描画後に本文とのあいだに空けるピクセル。</summary>
+    private const int LogoBottomGapPixels = 4;
 
-    public Task PrintAndCutAsync(string text, string? printerName = null, CancellationToken cancellationToken = default)
-        => Task.Run(() => PrintAndCutCore(text, printerName), cancellationToken);
+    public Task PrintAndCutAsync(string text, string? printerName = null, string? logoPath = null, CancellationToken cancellationToken = default)
+        => Task.Run(() => PrintAndCutCore(text, printerName, logoPath), cancellationToken);
 
     public IReadOnlyList<string> GetInstalledPrinterNames() => EnumerateInstalledPrinterNames();
 
@@ -85,7 +106,7 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
     // 印字コア（GDI）
     // -------------------------------------------------------------------------
 
-    private static void PrintAndCutCore(string text, string? printerName)
+    private static void PrintAndCutCore(string text, string? printerName, string? logoPath)
     {
         var name = string.IsNullOrWhiteSpace(printerName) ? GetDefaultPrinterNameOrThrow() : printerName.Trim();
 
@@ -112,7 +133,7 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
 
                 try
                 {
-                    RenderReceipt(hDC, text);
+                    RenderReceipt(hDC, text, logoPath);
                 }
                 finally
                 {
@@ -130,24 +151,36 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
         }
     }
 
-    private static void RenderReceipt(IntPtr hDC, string text)
+    private static void RenderReceipt(IntPtr hDC, string text, string? logoPath)
     {
-        int dpiY       = GetDeviceCaps(hDC, LogPixelsY);
-        int fontHeight = -(int)Math.Round(TextFontSizePt * dpiY / 72.0);
+        int dpiY = GetDeviceCaps(hDC, LogPixelsY);
 
         // 日本語フォント: SHIFTJIS_CHARSET=128 を明示することで全角文字化けを防ぐ
-        var hFont = CreateFont(
-            fontHeight, 0, 0, 0, FwNormal, 0, 0, 0,
-            ShiftJisCharset, 0, 0, 0, 0, JapaneseFontName);
-        if (hFont == IntPtr.Zero)
+        var hFontNormal = CreateReceiptFont(dpiY, TextFontSizePt, FwNormal);
+        var hFontBold = CreateReceiptFont(dpiY, TextFontSizePt, FwBold);
+        var hFontNormalLarge = CreateReceiptFont(dpiY, LargeTextFontSizePt, FwNormal);
+        var hFontBoldLarge = CreateReceiptFont(dpiY, LargeTextFontSizePt, FwBold);
+        if (hFontNormal == IntPtr.Zero || hFontBold == IntPtr.Zero
+            || hFontNormalLarge == IntPtr.Zero || hFontBoldLarge == IntPtr.Zero)
             throw new InvalidOperationException($"フォント「{JapaneseFontName}」の作成に失敗しました。");
 
-        var hOldFont = SelectObject(hDC, hFont);
+        var hOldFont = SelectObject(hDC, hFontNormal);
 
-        GetTextMetrics(hDC, out TEXTMETRIC tm);
-        int lineHeight = tm.tmHeight + tm.tmExternalLeading;
+        GetTextMetrics(hDC, out TEXTMETRIC tmBase);
+        int lineHeightNormal = tmBase.tmHeight + tmBase.tmExternalLeading;
+        int pageWidth = Math.Max(0, GetDeviceCaps(hDC, HorzRes));
 
-        int y = lineHeight * TopMarginLines;
+        int y = lineHeightNormal * TopMarginLines;
+
+        if (!string.IsNullOrWhiteSpace(logoPath))
+        {
+            var path = logoPath.Trim();
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"ロゴ画像が見つかりません: {path}");
+            DrawLogoScaledToPageWidth(hDC, path, pageWidth, ref y);
+            y += LogoBottomGapPixels;
+        }
+
         var lines = text
             .Replace("\r\n", "\n", StringComparison.Ordinal)
             .Replace("\r", "\n", StringComparison.Ordinal)
@@ -155,16 +188,202 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
 
         foreach (var line in lines)
         {
-            _ = TextOut(hDC, 0, y, line, line.Length);
-            y += lineHeight;
+            ParseReceiptLine(
+                line,
+                out var draw,
+                out var bold,
+                out var center,
+                out var right,
+                out var leftText,
+                out var rightText,
+                out var leftRight,
+                out var large);
+
+            var hFontLine = PickReceiptFont(bold, large, hFontNormal, hFontBold, hFontNormalLarge, hFontBoldLarge);
+            _ = SelectObject(hDC, hFontLine);
+            GetTextMetrics(hDC, out TEXTMETRIC tmLine);
+            int lineHeightThis = tmLine.tmHeight + tmLine.tmExternalLeading;
+
+            if (leftRight)
+            {
+                var leftStr = leftText ?? string.Empty;
+                var rightStr = rightText ?? string.Empty;
+
+                int xLeft = 0;
+                int xRight = 0;
+
+                if (pageWidth > 0 && rightStr.Length > 0)
+                {
+                    if (!GetTextExtentPoint32(hDC, rightStr, rightStr.Length, out var rightExtent))
+                        rightExtent = default;
+
+                    xRight = Math.Max(0, pageWidth - rightExtent.cx);
+
+                    if (leftStr.Length > 0)
+                    {
+                        if (!GetTextExtentPoint32(hDC, leftStr, leftStr.Length, out var leftExtent))
+                            leftExtent = default;
+
+                        // 過度な縮退時（左が長すぎる等）に右側が左側に食い込むのを少しでも避ける
+                        xRight = Math.Max(xRight, xLeft + leftExtent.cx);
+                    }
+                }
+
+                if (leftStr.Length > 0)
+                    _ = TextOut(hDC, xLeft, y, leftStr, leftStr.Length);
+
+                if (rightStr.Length > 0)
+                    _ = TextOut(hDC, xRight, y, rightStr, rightStr.Length);
+            }
+            else
+            {
+                int x = 0;
+                if (pageWidth > 0 && draw.Length > 0 && (center || right))
+                {
+                    if (!GetTextExtentPoint32(hDC, draw, draw.Length, out var extent))
+                        extent = default;
+                    if (center)
+                        x = Math.Max(0, (pageWidth - extent.cx) / 2);
+                    else if (right)
+                        x = Math.Max(0, pageWidth - extent.cx);
+                }
+
+                _ = TextOut(hDC, x, y, draw, draw.Length);
+            }
+
+            y += lineHeightThis;
         }
 
         // 下端マージン: この位置まで空白を描くことでページ高さを確保する
-        _ = TextOut(hDC, 0, y + lineHeight * BottomMarginLines, " ", 1);
+        _ = SelectObject(hDC, hFontNormal);
+        GetTextMetrics(hDC, out TEXTMETRIC tmBottom);
+        int lineHeightBottom = tmBottom.tmHeight + tmBottom.tmExternalLeading;
+        _ = TextOut(hDC, 0, y + lineHeightBottom * BottomMarginLines, " ", 1);
 
         _ = SelectObject(hDC, hOldFont);
-        _ = DeleteObject(hFont);
+        _ = DeleteObject(hFontNormal);
+        _ = DeleteObject(hFontBold);
+        _ = DeleteObject(hFontNormalLarge);
+        _ = DeleteObject(hFontBoldLarge);
         // 用紙カットは EndPage/EndDoc 時に APD5 が自動で行うため、明示的なカット処理は不要
+    }
+
+    /// <summary>
+    /// ロゴを可印字幅に合わせて横方向いっぱいに縮小し、現在の <paramref name="y"/> 位置に描画する。
+    /// </summary>
+    private static void DrawLogoScaledToPageWidth(IntPtr hDC, string path, int pageWidth, ref int y)
+    {
+        using var src = new Bitmap(path);
+        if (pageWidth <= 0)
+        {
+            using var g = Graphics.FromHdc(hDC);
+            g.DrawImage(src, 0, y);
+            y += src.Height;
+            return;
+        }
+
+        int targetW = pageWidth;
+        int targetH = Math.Max(1, (int)Math.Round(src.Height * (double)targetW / Math.Max(1, src.Width)));
+
+        using var scaled = new Bitmap(targetW, targetH, PixelFormat.Format32bppArgb);
+        using (var g = Graphics.FromImage(scaled))
+        {
+            g.Clear(System.Drawing.Color.White);
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.DrawImage(src, 0, 0, targetW, targetH);
+        }
+
+        using (var g = Graphics.FromHdc(hDC))
+        {
+            g.PageUnit = GraphicsUnit.Pixel;
+            g.DrawImage(scaled, 0, y);
+        }
+
+        y += targetH;
+    }
+
+    private static IntPtr CreateReceiptFont(int dpiY, int fontSizePt, int weight)
+    {
+        int fontHeight = -(int)Math.Round(fontSizePt * dpiY / 72.0);
+        return CreateFont(
+            fontHeight, 0, 0, 0, weight, 0, 0, 0,
+            ShiftJisCharset, 0, 0, 0, 0, JapaneseFontName);
+    }
+
+    private static IntPtr PickReceiptFont(
+        bool bold,
+        bool large,
+        IntPtr hFontNormal,
+        IntPtr hFontBold,
+        IntPtr hFontNormalLarge,
+        IntPtr hFontBoldLarge)
+    {
+        if (large)
+            return bold ? hFontBoldLarge : hFontNormalLarge;
+        return bold ? hFontBold : hFontNormal;
+    }
+
+    private static void ParseReceiptLine(
+        string line,
+        out string draw,
+        out bool bold,
+        out bool center,
+        out bool right,
+        out string? leftText,
+        out string? rightText,
+        out bool leftRight,
+        out bool large)
+    {
+        draw = line;
+        bold = false;
+        center = false;
+        right = false;
+        large = false;
+        leftText = null;
+        rightText = null;
+        leftRight = false;
+
+        if (draw.StartsWith(BoldLinePrefix, StringComparison.Ordinal))
+        {
+            bold = true;
+            draw = draw.Substring(BoldLinePrefix.Length);
+        }
+
+        if (draw.StartsWith(LargeLinePrefix, StringComparison.Ordinal))
+        {
+            large = true;
+            draw = draw.Substring(LargeLinePrefix.Length);
+        }
+
+        // [LR] は [B] の次に来る想定（[B] を先に付けるのがルール）
+        if (draw.StartsWith(LeftRightLinePrefix, StringComparison.Ordinal))
+        {
+            leftRight = true;
+            var rest = draw.Substring(LeftRightLinePrefix.Length);
+            var parts = rest.Split(LeftRightSeparator, 2);
+            leftText = parts.Length > 0 ? parts[0].Trim() : string.Empty;
+            rightText = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+            draw = string.Empty; // leftText/rightText を使うため
+            return;
+        }
+
+        if (draw.StartsWith(CenterLinePrefix, StringComparison.Ordinal))
+        {
+            center = true;
+            draw = draw.Substring(CenterLinePrefix.Length);
+        }
+        else if (draw.StartsWith(RightLinePrefix, StringComparison.Ordinal))
+        {
+            right = true;
+            draw = draw.Substring(RightLinePrefix.Length);
+        }
+
+        if (draw.StartsWith(LargeLinePrefix, StringComparison.Ordinal))
+        {
+            large = true;
+            draw = draw.Substring(LargeLinePrefix.Length);
+        }
     }
 
     private static string GetDefaultPrinterNameOrThrow()
@@ -197,6 +416,13 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
         public string? lpszOutput;
         public string? lpszDatatype;
         public uint fwType;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct SIZE
+    {
+        public int cx;
+        public int cy;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -268,6 +494,9 @@ public sealed class WindowsEpsonReceiptPrintService : IEpsonReceiptPrintService
 
     [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
     private static extern bool GetTextMetrics(IntPtr hdc, out TEXTMETRIC lptm);
+
+    [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool GetTextExtentPoint32(IntPtr hdc, string lpString, int c, out SIZE lpSize);
 
     // -------------------------------------------------------------------------
     // P/Invoke: winspool.drv（既定プリンター取得）

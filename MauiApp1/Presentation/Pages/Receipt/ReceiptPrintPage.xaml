@@ -9,6 +9,20 @@
             Padding="24,32"
             Spacing="16">
             <Label Text="Windows・APD5 想定の試験印字です。" />
+            <Label Text="ロゴ（任意）" FontAttributes="Bold" />
+            <Label
+                FontSize="13"
+                TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                Text="印刷の一番上に表示する画像。Windows ではローカルのファイルパスを指定するか「参照」で選びます（PNG/JPG/BMP など）。空欄ならロゴなし。" />
+            <HorizontalStackLayout Spacing="8">
+                <Entry
+                    x:Name="LogoPathEntry"
+                    Placeholder="例: C:\data\logo.png"
+                    HorizontalOptions="FillAndExpand" />
+                <Button
+                    Text="参照…"
+                    Clicked="OnLogoPickClicked" />
+            </HorizontalStackLayout>
             <Label Text="印字するテキスト" />
             <Editor
                 x:Name="ReceiptTextEditor"
@@ -35,6 +49,14 @@
             <Button
                 Text="印刷してカット"
                 Clicked="OnReceiptPrintClicked"
+                HorizontalOptions="Fill" />
+            <Label
+                FontSize="13"
+                TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                Text="下のボタンは、添付サンプルに近い体裁のデモ領収書を印字します（上のエディタの内容は使いません）。" />
+            <Button
+                Text="サンプル領収書（快活CLUB形式）を印刷"
+                Clicked="OnSampleKaikatsuReceiptClicked"
                 HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
