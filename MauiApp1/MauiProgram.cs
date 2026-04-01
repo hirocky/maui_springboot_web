@@ -41,11 +41,15 @@ public static class MauiProgram
 		// - OS 依存のメッセージボックス表示を抽象化したサービスを DI に登録する。
 		// - ViewModel からは IMessageBoxService 経由で利用し、user32.dll には依存しない。
 		builder.Services.AddSingleton<Presentation.Services.IMessageBoxService, Infrastructure.Platform.WindowsMessageBoxService>();
-		// TM レシート（APD5 + RAW ESC/POS）。Windows 以外では Null 実装を登録する。
-		builder.Services.AddSingleton<Presentation.Services.IEpsonReceiptPrintService, Infrastructure.Platform.WindowsEpsonReceiptPrintService>();
+		// レシート印刷（クリーンアーキテクチャ: Domain ポート → Infrastructure 実装）
+		builder.Services.AddSingleton<Domain.Printing.IReceiptPrinter, Infrastructure.Platform.WindowsEpsonReceiptPrinter>();
+		builder.Services.AddSingleton<Domain.Printing.IPrinterDiscovery, Infrastructure.Platform.WindowsPrinterDiscovery>();
 #else
-		builder.Services.AddSingleton<Presentation.Services.IEpsonReceiptPrintService, Infrastructure.Platform.NullEpsonReceiptPrintService>();
+		builder.Services.AddSingleton<Domain.Printing.IReceiptPrinter, Infrastructure.Platform.NullReceiptPrinter>();
+		builder.Services.AddSingleton<Domain.Printing.IPrinterDiscovery, Infrastructure.Platform.NullPrinterDiscovery>();
 #endif
+		// Application 層ユースケース
+		builder.Services.AddTransient<Application.Printing.PrintReceiptUseCase>();
 
 		// ViewModel
 		builder.Services.AddTransient<Presentation.ViewModels.Todos.TodoListViewModel>();

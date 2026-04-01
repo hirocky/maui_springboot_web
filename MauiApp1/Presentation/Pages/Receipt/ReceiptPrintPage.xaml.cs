@@ -1,4 +1,5 @@
-using MauiApp1.Presentation.Services;
+using MauiApp1.Application.Printing;
+using MauiApp1.Domain.Printing;
 using Microsoft.Maui.Storage;
 
 namespace MauiApp1.Presentation.Pages.Receipt;
@@ -7,17 +8,19 @@ public partial class ReceiptPrintPage : ContentPage
 {
     private const string DefaultPrinterDisplay = "（Windows の既定プリンターを使う）";
 
-    private readonly IEpsonReceiptPrintService _receiptPrintService;
+    private readonly PrintReceiptUseCase _printReceiptUseCase;
+    private readonly IPrinterDiscovery _printerDiscovery;
 
     /// <summary>
-    /// <see cref="PrinterPicker"/> の選択インデックスに対応する WinSpool 用プリンター名。先頭は null（既定）。
+    /// <see cref="PrinterPicker"/> の選択インデックスに対応するプリンター名。先頭は null（既定）。
     /// </summary>
     private List<string?> _printerNameByPickerIndex = new();
 
-    public ReceiptPrintPage(IEpsonReceiptPrintService receiptPrintService)
+    public ReceiptPrintPage(PrintReceiptUseCase printReceiptUseCase, IPrinterDiscovery printerDiscovery)
     {
         InitializeComponent();
-        _receiptPrintService = receiptPrintService;
+        _printReceiptUseCase = printReceiptUseCase;
+        _printerDiscovery = printerDiscovery;
         Loaded += OnLoaded;
     }
 
@@ -25,7 +28,7 @@ public partial class ReceiptPrintPage : ContentPage
     {
         Loaded -= OnLoaded;
 
-        var installed = _receiptPrintService.GetInstalledPrinterNames();
+        var installed = _printerDiscovery.GetInstalledPrinterNames();
         var display = new List<string> { DefaultPrinterDisplay };
         _printerNameByPickerIndex = new List<string?> { null };
         foreach (var name in installed)
@@ -39,7 +42,6 @@ public partial class ReceiptPrintPage : ContentPage
 
         if (installed.Count == 0)
         {
-            // Windows 以外・列挙失敗時は説明だけ残し、手動入力に任せる
             ReceiptPrinterNameEntry.Placeholder =
                 "例: EPSON TM-T88V Receipt（設定アプリのプリンター名と同じ表記）";
         }
@@ -77,7 +79,7 @@ public partial class ReceiptPrintPage : ContentPage
 
         try
         {
-            await _receiptPrintService.PrintAndCutAsync(text, printerName, logoPath);
+            await _printReceiptUseCase.ExecuteAsync(text, printerName, logoPath);
             await DisplayAlertAsync("印刷", "送信しました。プリンターが応答しない場合はドライバー名や RAW 可否を確認してください。", "OK");
         }
         catch (Exception ex)
