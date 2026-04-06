@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Presentation.Pages.Receipt.CustomerDisplaySamplePage"
+             Title="カスタマーディスプレイ（DM-D30）">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="24,32"
+            Spacing="16">
+            <Label
+                x:Name="PlatformHintLabel"
+                FontSize="13"
+                TextColor="{AppThemeBinding Light=#B00020, Dark=#FF8888}"
+                IsVisible="False"
+                Text="このサンプルは Windows（net10.0-windows）でのみ送信が動作します。" />
+            <Label Text="DM-D30 は多くの環境で「プリンター」として登録されます。その場合は下の「Windows プリンター」を選び、レシート印刷と同じ一覧から機器名を指定してください（スプーラへ RAW で ESC/POS を送ります）。仮想 COM だけのときは「COM ポート」を選びます。" />
+            <Label Text="接続方法" FontAttributes="Bold" />
+            <Picker
+                x:Name="TransportModePicker"
+                Title="接続方法"
+                SelectedIndexChanged="OnTransportModeChanged" />
+            <VerticalStackLayout
+                x:Name="WindowsPrinterSection"
+                Spacing="12">
+                <Label Text="Windows プリンター" FontAttributes="Bold" />
+                <Label
+                    FontSize="13"
+                    TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                    Text="レシート印刷画面と同じ一覧です。" />
+                <Picker
+                    x:Name="DisplayPrinterPicker"
+                    Title="一覧から選ぶ" />
+                <Label
+                    FontSize="13"
+                    TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                    Text="一覧に無いときだけ（任意）" />
+                <Entry
+                    x:Name="DisplayPrinterNameEntry"
+                    Placeholder="設定アプリのプリンター名をそのまま入力"
+                    HorizontalOptions="Fill" />
+            </VerticalStackLayout>
+            <VerticalStackLayout
+                x:Name="ComPortSection"
+                Spacing="12"
+                IsVisible="False">
+                <Label Text="COM ポート" FontAttributes="Bold" />
+                <Label
+                    x:Name="DetectedPortsLabel"
+                    FontSize="13"
+                    TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                    IsVisible="False" />
+                <Entry
+                    x:Name="ComPortEntry"
+                    Placeholder="デバイスマネージャーで確認した COM（例: COM5）"
+                    HorizontalOptions="Fill" />
+                <Label Text="ボーレート" FontAttributes="Bold" />
+                <Picker
+                    x:Name="BaudRatePicker"
+                    Title="ボーレート" />
+            </VerticalStackLayout>
+            <Label Text="1 行目（最大 20 バイト相当・Shift_JIS）" />
+            <Entry
+                x:Name="Line1Entry"
+                Placeholder="Welcome"
+                Text="いらっしゃいませ"
+                HorizontalOptions="Fill" />
+            <Label Text="2 行目" />
+            <Entry
+                x:Name="Line2Entry"
+                Placeholder="Thank you"
+                Text="ありがとうございました"
+                HorizontalOptions="Fill" />
+            <Button
+                x:Name="SendButton"
+                Text="ディスプレイに送る"
+                Clicked="OnSendClicked"
+                HorizontalOptions="Fill" />
+            <Label
+                FontSize="13"
+                TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                Text="送信内容は ESC @（初期化）のあと、1 行目・LF（0x0A）・2 行目の順です。COM 利用時は機器のボーレートに合わせてください。" />
+            <Button
+                Text="サンプル文言に戻す"
+                Clicked="OnResetSampleClicked"
+                HorizontalOptions="Fill" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

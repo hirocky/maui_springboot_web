@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(java|properties|xml|yaml|yml\\)$\")",
+      "Bash(./gradlew bootRun)",
+      "Bash(java -version)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":8080\")",
+      "Bash(findstr LISTENING)",
+      "Bash(taskkill /PID 33308 /F)",
+      "Bash(cmd.exe /c \"taskkill /PID 33308 /F\")",
+      "Bash(cmd.exe /c \"taskkill /PID 33308 /F 2>&1\")",
+      "Bash(powershell -Command \"Stop-Process -Id 33308 -Force -ErrorAction SilentlyContinue; Write-Host 'done'\")",
+      "Bash(powershell -Command \"Get-Command java | Select-Object -ExpandProperty Source; [System.Environment]::GetEnvironmentVariable\\('JAVA_HOME', 'Machine'\\); [System.Environment]::GetEnvironmentVariable\\('JAVA_HOME', 'User'\\)\")",
+      "Bash(powershell -Command \"Stop-Process -Id 62616 -Force -ErrorAction SilentlyContinue; Write-Host 'stopped'\")",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess\")",
+      "Bash(powershell -Command \"Stop-Process -Id 34380 -Force -ErrorAction SilentlyContinue; Write-Host 'stopped'\")"
+    ]
+  }
+}

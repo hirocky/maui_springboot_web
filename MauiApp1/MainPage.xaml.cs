@@ -36,4 +36,9 @@ public partial class MainPage : ContentPage
 	{
 		await FeatureWindows.OpenFeatureAsync<ReceiptPrintPage>();
 	}
+
+	private async void OnCustomerDisplayClicked(object? sender, EventArgs e)
+	{
+		await FeatureWindows.OpenFeatureAsync<CustomerDisplaySamplePage>();
+	}
 }

@@ -44,9 +44,12 @@ public static class MauiProgram
 		// レシート印刷（クリーンアーキテクチャ: Domain ポート → Infrastructure 実装）
 		builder.Services.AddSingleton<Domain.Printing.IReceiptPrinter, Infrastructure.Platform.WindowsEpsonReceiptPrinter>();
 		builder.Services.AddSingleton<Domain.Printing.IPrinterDiscovery, Infrastructure.Platform.WindowsPrinterDiscovery>();
+		// カスタマーディスプレイ（DM-D30 等・COM + ESC/POS）
+		builder.Services.AddSingleton<Presentation.Services.ICustomerDisplayService, Infrastructure.Platform.WindowsEpsonDmD30CustomerDisplayService>();
 #else
 		builder.Services.AddSingleton<Domain.Printing.IReceiptPrinter, Infrastructure.Platform.NullReceiptPrinter>();
 		builder.Services.AddSingleton<Domain.Printing.IPrinterDiscovery, Infrastructure.Platform.NullPrinterDiscovery>();
+		builder.Services.AddSingleton<Presentation.Services.ICustomerDisplayService, Infrastructure.Platform.NullCustomerDisplayService>();
 #endif
 		// Application 層ユースケース
 		builder.Services.AddTransient<Application.Printing.PrintReceiptUseCase>();
@@ -61,6 +64,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<Presentation.Pages.Todos.TodoListPage>();
 		builder.Services.AddTransient<Presentation.Pages.Order.OrderPage>();
 		builder.Services.AddTransient<Presentation.Pages.Receipt.ReceiptPrintPage>();
+		builder.Services.AddTransient<Presentation.Pages.Receipt.CustomerDisplaySamplePage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.TodayTasksPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.ProgressReportPage>();
 		builder.Services.AddTransient<Presentation.Pages.Habits.HabitListPage>();

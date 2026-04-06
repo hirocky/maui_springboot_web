@@ -27,6 +27,11 @@
                 Text="レシート印刷"
                 Clicked="OnReceiptPrintClicked"
                 HorizontalOptions="Fill" />
+
+            <Button
+                Text="カスタマーディスプレイ（DM-D30）"
+                Clicked="OnCustomerDisplayClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

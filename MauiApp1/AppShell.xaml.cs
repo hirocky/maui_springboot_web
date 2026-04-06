@@ -15,6 +15,7 @@ public partial class AppShell : Shell
 		// 画面遷移時は論理名で指定することで、View同士の結合度を下げる。
 		Routing.RegisterRoute(nameof(OrderPage), typeof(OrderPage));
 		Routing.RegisterRoute(nameof(ReceiptPrintPage), typeof(ReceiptPrintPage));
+		Routing.RegisterRoute(nameof(CustomerDisplaySamplePage), typeof(CustomerDisplaySamplePage));
 		Routing.RegisterRoute(nameof(TodoListPage), typeof(TodoListPage));
 		// 習慣記録: ハブ画面と、習慣登録・今日のタスク・進捗レポート（Presentation/Pages/Habits 配下）
 		Routing.RegisterRoute(nameof(HabitRecordHubPage), typeof(HabitRecordHubPage));
