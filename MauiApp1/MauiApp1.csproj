@@ -77,8 +77,6 @@
 	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
 		<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
 		<PackageReference Include="System.IO.Ports" Version="9.0.0" />
-		<!-- Shift_JIS（932）を Encoding.GetEncoding で使うため -->
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" />
 	</ItemGroup>
 
 </Project>
