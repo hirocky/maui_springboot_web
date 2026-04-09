@@ -4,6 +4,7 @@
 
 - `MauiApp1`: .NET MAUI アプリ本体
 - `MauiApp1.UnitTests`: `MauiApp1` 向けの単体テスト
+- `KcWatchdog`: Windows 向けプロセスウォッチドッグ（本番はサービス、開発はコンソール）
 - `spring_webapp1`: Spring Boot アプリ
 - `docker-compose.yml`: MySQL コンテナ起動設定
 
@@ -77,7 +78,31 @@ cd .\spring_webapp1
 .\gradlew.bat bootRun
 ```
 
-### 6. Cursor Terminal で文字化けする場合
+### 6. KcWatchdog を開発時に起動
+
+本番では Windows のサービス（SCM）として登録して動かし、開発時はコンソールから `dotnet run` で起動します（`Ctrl + C` で停止）。サービスとして起動した場合だけ SCM 連携が有効になります。
+
+`pep` をカレントにして実行します。
+
+```powershell
+dotnet run --project .\KcWatchdog\KcWatchdog.csproj
+```
+
+開発用設定（ポーリング間隔 2 秒など）を読み込む場合は、起動前に環境変数を付けます。
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+dotnet run --project .\KcWatchdog\KcWatchdog.csproj
+```
+
+監視対象の exe やプロセス名は `KcWatchdog\appsettings.json` で変更します。
+
+**注意**
+
+- 既定の設定では、**`artifacts` 以下に出力した MAUI アプリ**（いま `appsettings.json` で指定している `artifacts\MauiApp1-windows\MauiApp1.exe` とそのフォルダ構成）を監視対象にしています。別のアプリやパスにする場合は設定を書き換えてください。
+- ウォッチドッグは「そのパスに exe が存在する」ことを前提に動きます。**先にこの README の「3. 配布用 exe の作成」などで `artifacts\MauiApp1-windows\` に `MauiApp1.exe` を生成しておく**必要があります。未 publish の状態では exe が無く、ログにエラーが出るだけで再起動はできません。
+
+### 7. Cursor Terminal で文字化けする場合
 
 `spring_webapp1` のログが文字化けする場合は、`bootRun` 前に文字コードを UTF-8 に揃えてから起動します。
 
