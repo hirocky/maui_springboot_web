@@ -65,7 +65,6 @@ public class TodoListViewModel : BaseViewModel
         _messageBoxService = messageBoxService;
 
         // MAUI標準のCommandを利用して、UIからの操作をViewModelのメソッドにひも付ける。
-#pragma warning disable CA1416 // Command のプラットフォーム注釈に対する誤検知を局所抑制
         LoadCommand = new Command(async () => await LoadAsync());
 
         // 追加ボタンの有効/無効制御は、AddAsync 内で NewTitle を検証するだけにして、
@@ -73,7 +72,6 @@ public class TodoListViewModel : BaseViewModel
         AddCommand = new Command(async () => await AddAsync());
         ToggleCompletedCommand = new Command(async (object? p) => await ToggleCompletedAsync(p as TodoItem));
         DeleteCommand = new Command(async (object? p) => await DeleteAsync(p as TodoItem));
-#pragma warning restore CA1416
     }
 
     /// <summary>
@@ -112,7 +110,7 @@ public class TodoListViewModel : BaseViewModel
         NewTitle = string.Empty;
     }
 
-    private async Task ToggleCompletedAsync(TodoItem item)
+    private async Task ToggleCompletedAsync(TodoItem? item)
     {
         if (item == null)
         {
@@ -125,7 +123,7 @@ public class TodoListViewModel : BaseViewModel
         await LoadAsync();
     }
 
-    private async Task DeleteAsync(TodoItem item)
+    private async Task DeleteAsync(TodoItem? item)
     {
         if (item == null)
         {

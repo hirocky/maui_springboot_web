@@ -69,11 +69,9 @@ public class HabitListViewModel : BaseViewModel
     {
         _habitService = habitService;
         _messageBoxService = messageBoxService;
-#pragma warning disable CA1416 // Command のプラットフォーム注釈に対する誤検知を局所抑制
         LoadCommand = new Command(async () => await LoadAsync());
         AddCommand = new Command(async () => await AddAsync());
         DeleteCommand = new Command(async (object? p) => await DeleteAsync(p as Habit));
-#pragma warning restore CA1416
 
         // 色プリセット（Picker の表示名とヘックス値）
         ColorOptions.Add(new ColorOption { Name = "紫", Hex = "#6200EE" });

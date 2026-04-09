@@ -1,16 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net10.0</TargetFrameworks>
-		<!-- Windows ではローカルでビルド可能な TFM のみを既定対象にする -->
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
-		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+		<!-- Windows では Windows TFM のみを対象にする（CA1416 の正攻法対応）。 -->
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">net10.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('windows'))">net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 
-		<!-- net10.0: 単体テストプロジェクトから参照するためのライブラリ出力 -->
-		<OutputType Condition="'$(TargetFramework)' == 'net10.0'">Library</OutputType>
-		<!-- net10.0 / Windows: SDK と MAUI・Windows ワークロード双方で AssemblyInfo が生成され重複するのを防ぐ -->
-		<GenerateTargetFrameworkAttribute Condition="'$(TargetFramework)' == 'net10.0'">false</GenerateTargetFrameworkAttribute>
-		<GenerateAssemblyInfo Condition="'$(TargetFramework)' == 'net10.0'">false</GenerateAssemblyInfo>
+		<!-- SDK と MAUI・Windows ワークロード双方で AssemblyInfo が生成され重複するのを防ぐ -->
 		<GenerateTargetFrameworkAttribute Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">false</GenerateTargetFrameworkAttribute>
 		<GenerateAssemblyInfo Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">false</GenerateAssemblyInfo>
 
@@ -21,7 +16,7 @@
 		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
 		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
-		<OutputType Condition="'$(TargetFramework)' != 'net10.0'">Exe</OutputType>
+		<OutputType>Exe</OutputType>
 		<RootNamespace>MauiApp1</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>

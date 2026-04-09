@@ -54,9 +54,7 @@ public class ProgressReportViewModel : BaseViewModel
     public ProgressReportViewModel(HabitService habitService)
     {
         _habitService = habitService;
-#pragma warning disable CA1416 // Command のプラットフォーム注釈に対する誤検知を局所抑制
         LoadCommand = new Command(async () => await LoadAsync());
-#pragma warning restore CA1416
     }
 
     /// <summary>

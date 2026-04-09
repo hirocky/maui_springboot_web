@@ -54,10 +54,8 @@ public class TodayTasksViewModel : BaseViewModel
     {
         _habitService = habitService;
 
-#pragma warning disable CA1416 // Command のプラットフォーム注釈に対する誤検知を局所抑制
         LoadCommand = new Command(async () => await LoadAsync());
         ToggleCheckCommand = new Command(async (object? p) => await ToggleCheckAsync(p as TodayHabitItem));
-#pragma warning restore CA1416
     }
 
     /// <summary>
