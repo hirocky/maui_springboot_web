@@ -37,20 +37,47 @@ dotnet build .\MauiApp1\MauiApp1.csproj -f net10.0-windows10.0.19041.0
 dotnet run --project .\MauiApp1\MauiApp1.csproj -f net10.0-windows10.0.19041.0
 ```
 
-### 3. 単体テストを実行
+### 3. 配布用 exe の作成（Windows / publish）
+
+`dotnet publish` で `MauiApp1.exe` を含むフォルダ一式を出力します。出力先は `artifacts/`（`.gitignore` 済み）です。
+
+**スクリプト（推奨）** — `pep` をカレントにして実行します。
+
+```powershell
+# フレームワーク依存（各 PC に .NET 10 デスクトップランタイムが必要）
+.\scripts\publish-maui-windows.ps1
+
+# ランタイム同梱（フォルダは大きくなるが、端末に .NET を入れなくてよい）
+.\scripts\publish-maui-windows.ps1 -SelfContained
+```
+
+成果物の例: `artifacts\MauiApp1-windows\MauiApp1.exe`。**exe 単体ではなく、このフォルダごと**（ZIP やコピー）で配布してください。
+
+**起動**: 上記の publish で作られた `MauiApp1.exe` を、エクスプローラーでダブルクリックするだけで MAUI アプリが起動します（同じフォルダ内の DLL などはそのまま置いた状態にしてください）。
+
+**コマンドで直接行う場合**
+
+```powershell
+dotnet publish .\MauiApp1\MauiApp1.csproj `
+  -c Release `
+  -f net10.0-windows10.0.19041.0 `
+  -o .\artifacts\MauiApp1-windows
+```
+
+### 4. 単体テストを実行
 
 ```powershell
 dotnet test .\MauiApp1.UnitTests\MauiApp1.UnitTests.csproj
 ```
 
-### 4. Spring Boot アプリを起動
+### 5. Spring Boot アプリを起動
 
 ```powershell
 cd .\spring_webapp1
 .\gradlew.bat bootRun
 ```
 
-### 5. Cursor Terminal で文字化けする場合
+### 6. Cursor Terminal で文字化けする場合
 
 `spring_webapp1` のログが文字化けする場合は、`bootRun` 前に文字コードを UTF-8 に揃えてから起動します。
 
