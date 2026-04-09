@@ -1,22 +1,29 @@
 using System.IO.Ports;
 using System.Runtime.InteropServices;
 using System.Text;
+using MauiApp1.Infrastructure.Configuration;
 using MauiApp1.Presentation.Services;
 
 namespace MauiApp1.Infrastructure.Platform;
 
 #if WINDOWS
 /// <summary>
-/// Epson DM-D30 向け: ESC/POS を (1) Windows スプーラ RAW、または (2) COM シリアルで送る。
+/// Epson DM-D30 向け: ESC/POS を Windows スプーラ RAW で送る。
 /// </summary>
 public sealed class WindowsEpsonDmD30CustomerDisplayService : ICustomerDisplayService
 {
     /// <summary>DM-D30 の標準は 20 桁×2 行（本サンプルは行あたり Shift_JIS で最大 20 バイト）。</summary>
     private const int MaxBytesPerLine = 20;
+    private readonly string _configuredWindowsPrinterName;
 
     static WindowsEpsonDmD30CustomerDisplayService()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+    }
+
+    public WindowsEpsonDmD30CustomerDisplayService(CustomerDisplaySettings settings)
+    {
+        _configuredWindowsPrinterName = settings.WindowsPrinterName;
     }
 
     public Task SendTwoLinesAsync(
@@ -25,20 +32,30 @@ public sealed class WindowsEpsonDmD30CustomerDisplayService : ICustomerDisplaySe
         CustomerDisplaySendOptions options,
         CancellationToken cancellationToken = default)
     {
-        ValidateOptions(options);
-        return Task.Run(() => SendCore(line1, line2, options), cancellationToken);
+        var normalizedOptions = NormalizeOptions(options);
+        return Task.Run(() => SendCore(line1, line2, normalizedOptions), cancellationToken);
     }
 
-    private static void ValidateOptions(CustomerDisplaySendOptions options)
+    private CustomerDisplaySendOptions NormalizeOptions(CustomerDisplaySendOptions options)
     {
-        var hasCom = !string.IsNullOrWhiteSpace(options.ComPortName);
-        var hasPrinter = !string.IsNullOrWhiteSpace(options.WindowsPrinterName);
-        if (hasCom == hasPrinter)
+        if (!string.IsNullOrWhiteSpace(options.ComPortName))
         {
             throw new ArgumentException(
-                "COM ポート名と Windows プリンター名のどちらか一方だけを指定してください。",
+                "このアプリでは接続方法は「Windows プリンター」のみです。COM ポートは利用できません。",
                 nameof(options));
         }
+
+        var printerName = string.IsNullOrWhiteSpace(options.WindowsPrinterName)
+            ? _configuredWindowsPrinterName
+            : options.WindowsPrinterName;
+
+        if (string.IsNullOrWhiteSpace(printerName))
+        {
+            throw new InvalidOperationException(
+                "カスタマーディスプレイ用プリンター名が設定されていません。appsettings.windows.json の CustomerDisplay:WindowsPrinterName を確認してください。");
+        }
+
+        return new CustomerDisplaySendOptions(WindowsPrinterName: printerName.Trim());
     }
 
     private static void SendCore(string line1, string line2, CustomerDisplaySendOptions options)
@@ -211,6 +228,8 @@ public sealed class WindowsEpsonDmD30CustomerDisplayService : ICustomerDisplaySe
         var b1 = TrimLineToShiftJisBytes(line1);
         var b2 = TrimLineToShiftJisBytes(line2);
         ms.Write(b1);
+        // LF 単体だと次行の同一桁から表示される個体があるため、CR+LF で行頭へ戻してから改行する。
+        ms.WriteByte(0x0D);
         ms.WriteByte(0x0A);
         ms.Write(b2);
 

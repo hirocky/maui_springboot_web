@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using MauiApp1.Infrastructure.Configuration;
 
 namespace MauiApp1;
 
@@ -7,6 +9,15 @@ public static class MauiProgram
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
+
+#if WINDOWS
+		builder.Configuration.AddJsonFile("appsettings.windows.json", optional: true, reloadOnChange: false);
+		var customerDisplaySettings = builder.Configuration
+			.GetSection(CustomerDisplaySettings.SectionName)
+			.Get<CustomerDisplaySettings>() ?? new CustomerDisplaySettings();
+		builder.Services.AddSingleton(customerDisplaySettings);
+#endif
+
 		builder
 			.UseMauiApp<App>()
 			.ConfigureFonts(fonts =>
