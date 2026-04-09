@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiApp1.Presentation.Pages.Receipt.ReceiptPrintPage"
-             Title="レシート印刷">
+             Title="レシートプリンター（TM-T88V）">
 
     <ScrollView>
         <VerticalStackLayout
@@ -30,22 +30,7 @@
                 AutoSize="TextChanges"
                 MinimumHeightRequest="100"
                 HorizontalOptions="Fill" />
-            <Label Text="プリンター" FontAttributes="Bold" />
-            <Label
-                FontSize="13"
-                TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
-                Text="Windows の「設定」→「Bluetooth とデバイス」→「プリンターとスキャナー」に表示されている名前と同じものが、下の一覧に出ます。迷ったら「既定のプリンター」を選ぶか、設定で TM を既定にしてください。" />
-            <Picker
-                x:Name="PrinterPicker"
-                Title="一覧から選ぶ" />
-            <Label
-                FontSize="13"
-                TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
-                Text="一覧に無いときだけ（任意）" />
-            <Entry
-                x:Name="ReceiptPrinterNameEntry"
-                Placeholder="空欄でよい。ここに入力すると一覧より優先されます。"
-                HorizontalOptions="Fill" />
+            <Label Text="プリンターは固定で利用します（環境依存設定の ReceiptPrinter:WindowsPrinterName）。" />
             <Button
                 Text="印刷してカット"
                 Clicked="OnReceiptPrintClicked"

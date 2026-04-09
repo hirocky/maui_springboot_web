@@ -15,11 +15,10 @@ public sealed class PrintReceiptUseCase
 
     public Task ExecuteAsync(
         string text,
-        string? printerName = null,
         string? logoPath = null,
         CancellationToken cancellationToken = default)
     {
         var document = ReceiptTextParser.Parse(text, logoPath);
-        return _printer.PrintAndCutAsync(document, printerName, cancellationToken);
+        return _printer.PrintAndCutAsync(document, null, cancellationToken);
     }
 }

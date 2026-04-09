@@ -24,7 +24,7 @@
                 HorizontalOptions="Fill" />
 
             <Button
-                Text="レシート印刷"
+                Text="レシートプリンター（TM-T88V）"
                 Clicked="OnReceiptPrintClicked"
                 HorizontalOptions="Fill" />
 

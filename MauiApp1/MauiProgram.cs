@@ -12,9 +12,13 @@ public static class MauiProgram
 
 #if WINDOWS
 		builder.Configuration.AddJsonFile("appsettings.windows.json", optional: true, reloadOnChange: false);
+		var receiptPrinterSettings = builder.Configuration
+			.GetSection(ReceiptPrinterSettings.SectionName)
+			.Get<ReceiptPrinterSettings>() ?? new ReceiptPrinterSettings();
 		var customerDisplaySettings = builder.Configuration
 			.GetSection(CustomerDisplaySettings.SectionName)
 			.Get<CustomerDisplaySettings>() ?? new CustomerDisplaySettings();
+		builder.Services.AddSingleton(receiptPrinterSettings);
 		builder.Services.AddSingleton(customerDisplaySettings);
 #endif
 

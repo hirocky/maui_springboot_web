@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
+using MauiApp1.Infrastructure.Configuration;
 
 namespace MauiApp1.Infrastructure.Platform;
 
@@ -27,6 +27,12 @@ public sealed class WindowsEpsonReceiptPrinter : IReceiptPrinter
     private const int TopMarginLines = 1;
     private const int BottomMarginLines = 1;
     private const int LogoBottomGapPixels = 4;
+    private readonly string _configuredWindowsPrinterName;
+
+    public WindowsEpsonReceiptPrinter(ReceiptPrinterSettings settings)
+    {
+        _configuredWindowsPrinterName = settings.WindowsPrinterName;
+    }
 
     public Task PrintAndCutAsync(
         ReceiptDocument document,
@@ -34,9 +40,9 @@ public sealed class WindowsEpsonReceiptPrinter : IReceiptPrinter
         CancellationToken cancellationToken = default)
         => Task.Run(() => PrintAndCutCore(document, printerName), cancellationToken);
 
-    private static void PrintAndCutCore(ReceiptDocument document, string? printerName)
+    private void PrintAndCutCore(ReceiptDocument document, string? printerName)
     {
-        var name = string.IsNullOrWhiteSpace(printerName) ? GetDefaultPrinterNameOrThrow() : printerName.Trim();
+        var name = ResolvePrinterNameOrThrow(printerName, _configuredWindowsPrinterName);
 
         var hDC = CreateDC(null, name, null, IntPtr.Zero);
         if (hDC == IntPtr.Zero)
@@ -204,22 +210,15 @@ public sealed class WindowsEpsonReceiptPrinter : IReceiptPrinter
         return bold ? fB : fN;
     }
 
-    private static string GetDefaultPrinterNameOrThrow()
+    private static string ResolvePrinterNameOrThrow(string? requestedPrinterName, string configuredPrinterName)
     {
-        int size = 0;
-        if (GetDefaultPrinter(null, ref size))
-            throw new InvalidOperationException("既定プリンターの取得に失敗しました（想定外の応答）。");
+        if (!string.IsNullOrWhiteSpace(requestedPrinterName))
+            return requestedPrinterName.Trim();
+        if (!string.IsNullOrWhiteSpace(configuredPrinterName))
+            return configuredPrinterName.Trim();
 
-        const int errorInsufficientBuffer = 122;
-        if (Marshal.GetLastWin32Error() != errorInsufficientBuffer || size <= 0)
-            throw new InvalidOperationException(
-                "既定のプリンターが設定されていません。Windows の設定で既定プリンターを指定するか、プリンター名を入力してください。");
-
-        var sb = new StringBuilder(size);
-        if (!GetDefaultPrinter(sb, ref size))
-            throw new InvalidOperationException("既定プリンター名の取得に失敗しました。");
-
-        return sb.ToString();
+        throw new InvalidOperationException(
+            "レシートプリンター名が設定されていません。appsettings.windows.json の ReceiptPrinter:WindowsPrinterName を確認してください。");
     }
 
     // -------------------------------------------------------------------------
@@ -316,7 +315,5 @@ public sealed class WindowsEpsonReceiptPrinter : IReceiptPrinter
     [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool GetTextExtentPoint32(IntPtr hdc, string lpString, int c, out SIZE lpSize);
 
-    [DllImport("winspool.drv", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern bool GetDefaultPrinter(StringBuilder? pszBuffer, ref int pcchBuffer);
 }
 #endif

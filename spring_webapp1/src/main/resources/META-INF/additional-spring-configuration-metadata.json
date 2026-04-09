@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "receipt.printer.windows-name",
+      "type": "java.lang.String",
+      "description": "Windows で使用するレシートプリンター名。"
+    },
+    {
+      "name": "receipt.printer.paper-width-mm",
+      "type": "java.lang.Double",
+      "description": "印字時の用紙幅（mm）。"
+    },
+    {
+      "name": "receipt.printer.side-margin-mm",
+      "type": "java.lang.Double",
+      "description": "左右余白（mm）。"
+    }
+  ]
+}

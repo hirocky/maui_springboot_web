@@ -7,5 +7,5 @@ import java.awt.print.PrinterException;
  * Infrastructure 層に具体実装を持つ。
  */
 public interface IReceiptPrinter {
-    void printAndCut(ReceiptDocument document, String printerKeyword) throws PrinterException;
+    void printAndCut(ReceiptDocument document) throws PrinterException;
 }

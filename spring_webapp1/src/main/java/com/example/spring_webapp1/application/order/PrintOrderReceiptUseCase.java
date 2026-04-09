@@ -13,9 +13,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Component
 public class PrintOrderReceiptUseCase {
-
-    private static final String PRINTER_KEYWORD = "TM-T88V";
-
     private final PrintReceiptUseCase printReceiptUseCase;
 
     public PrintOrderReceiptUseCase(PrintReceiptUseCase printReceiptUseCase) {
@@ -24,7 +21,7 @@ public class PrintOrderReceiptUseCase {
 
     public void execute(OrderData order) throws PrinterException {
         String text = buildReceiptText(order);
-        printReceiptUseCase.execute(text, PRINTER_KEYWORD);
+        printReceiptUseCase.execute(text);
     }
 
     private static String buildReceiptText(OrderData order) {

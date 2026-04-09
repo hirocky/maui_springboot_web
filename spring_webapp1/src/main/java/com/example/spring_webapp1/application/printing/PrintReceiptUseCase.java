@@ -21,12 +21,12 @@ public class PrintReceiptUseCase {
         this.parser = parser;
     }
 
-    public void execute(String text, String printerKeyword) throws PrinterException {
-        execute(text, printerKeyword, null);
+    public void execute(String text) throws PrinterException {
+        execute(text, null);
     }
 
-    public void execute(String text, String printerKeyword, String logoPath) throws PrinterException {
+    public void execute(String text, String logoPath) throws PrinterException {
         ReceiptDocument document = parser.parse(text, logoPath);
-        printer.printAndCut(document, printerKeyword);
+        printer.printAndCut(document);
     }
 }
