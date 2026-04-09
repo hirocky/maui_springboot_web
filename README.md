@@ -24,16 +24,17 @@ docker compose up -d
 
 `docker-compose.yml` では、`mysql:8.4` を利用し、ローカルの `mysql-data` をデータ永続化先として使用します。
 
-### 2. MAUI アプリをビルド/実行
+### 2. MAUI アプリをビルドして実行
+
+`dotnet build` はビルドのみ行い、アプリは起動しません。  
+Windows で実行する場合は `dotnet run` を使います。
 
 ```powershell
-dotnet build .\MauiApp1\MauiApp1.csproj
-```
-
-Windows ターゲットで実行する場合の例:
-
-```powershell
+# ビルド（起動はしない）
 dotnet build .\MauiApp1\MauiApp1.csproj -f net10.0-windows10.0.19041.0
+
+# 実行（必要ならビルドも行って起動）
+dotnet run --project .\MauiApp1\MauiApp1.csproj -f net10.0-windows10.0.19041.0
 ```
 
 ### 3. 単体テストを実行

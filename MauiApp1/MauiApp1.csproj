@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst;net10.0</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
+		<!-- Windows ではローカルでビルド可能な TFM のみを既定対象にする -->
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 
 		<!-- net10.0: 単体テストプロジェクトから参照するためのライブラリ出力 -->
 		<OutputType Condition="'$(TargetFramework)' == 'net10.0'">Library</OutputType>
