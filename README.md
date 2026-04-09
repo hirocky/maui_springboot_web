@@ -50,6 +50,20 @@ cd .\spring_webapp1
 .\gradlew.bat bootRun
 ```
 
+### 5. Cursor Terminal で文字化けする場合
+
+`spring_webapp1` のログが文字化けする場合は、`bootRun` 前に文字コードを UTF-8 に揃えてから起動します。
+
+```powershell
+# 実行中の bootRun があれば Ctrl + C で停止
+chcp 65001
+[Console]::InputEncoding  = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$env:JAVA_TOOL_OPTIONS = "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8"
+cd .\spring_webapp1
+.\gradlew.bat bootRun
+```
+
 ## 開発時メモ
 
 - ローカル専用ディレクトリ（`.claude`、`.vscode` など）は `.gitignore` で除外しています。

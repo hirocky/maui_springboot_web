@@ -29,3 +29,12 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Windows ターミナルでも日本語ログが化けにくいように UTF-8 を明示
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('bootRun') {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-Dsun.stdout.encoding=UTF-8', '-Dsun.stderr.encoding=UTF-8']
+}
