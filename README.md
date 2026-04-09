@@ -1,0 +1,56 @@
+# pep
+
+`pep` は、以下の構成で動作確認や検証を行うためのワークスペースです。
+
+- `MauiApp1`: .NET MAUI アプリ本体
+- `MauiApp1.UnitTests`: `MauiApp1` 向けの単体テスト
+- `spring_webapp1`: Spring Boot アプリ
+- `docker-compose.yml`: MySQL コンテナ起動設定
+
+## 前提環境
+
+- .NET SDK 10 系
+- .NET MAUI ワークロード
+- Java 21（Spring Boot 用）
+- Docker Desktop（MySQL 用）
+
+## セットアップ
+
+### 1. MySQL を起動
+
+```powershell
+docker compose up -d
+```
+
+`docker-compose.yml` では、`mysql:8.4` を利用し、ローカルの `mysql-data` をデータ永続化先として使用します。
+
+### 2. MAUI アプリをビルド/実行
+
+```powershell
+dotnet build .\MauiApp1\MauiApp1.csproj
+```
+
+Windows ターゲットで実行する場合の例:
+
+```powershell
+dotnet build .\MauiApp1\MauiApp1.csproj -f net10.0-windows10.0.19041.0
+```
+
+### 3. 単体テストを実行
+
+```powershell
+dotnet test .\MauiApp1.UnitTests\MauiApp1.UnitTests.csproj
+```
+
+### 4. Spring Boot アプリを起動
+
+```powershell
+cd .\spring_webapp1
+.\gradlew.bat bootRun
+```
+
+## 開発時メモ
+
+- ローカル専用ディレクトリ（`.claude`、`.vscode` など）は `.gitignore` で除外しています。
+- 生成物（`bin`、`obj`、`build`、`target` など）も除外しています。
+- 秘密情報は `.env` などに置き、Git に含めない運用を推奨します。
